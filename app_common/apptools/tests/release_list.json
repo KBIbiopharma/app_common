@@ -1,0 +1,14 @@
+[
+	{
+		"target_versions": "0.6..+",
+		"target_builds": ".+",
+		"release_filenames": ["content_0.7.2_3.json"], 
+		"target_users": "all"
+    },
+    {
+		"target_versions": "0.7..",
+		"target_builds": ".+",
+		"release_filenames": ["content_0.7.2_3.json"], 
+		"target_users": "all"
+    }
+]
