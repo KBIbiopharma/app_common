@@ -62,7 +62,8 @@ def request_string_selection(string_options, dlg_kind="livemodal",
     Parameters
     ----------
     string_options : list
-        List of string values to choose from.
+        List of string values to choose from. Passed as the `string_options`
+        attribute of the selector dialog (`dlg_klass` or `GuiStringSelector`).
 
     dlg_kind : str or None [OPTIONAL]
         Kind of dialog to open for user to interact with. Mostly for testing
@@ -74,9 +75,8 @@ def request_string_selection(string_options, dlg_kind="livemodal",
 
     **selector_traits : dict [OPTIONAL]
         Additional traits to control the behavior and initialization of the
-        Selector object, for example `title`, `selected_string` or view
-        controls. The `string_options` trait is passed as the `string_options`
-        argument.
+        `Selector` object, for example `title`, `selected_string`, `view_klass`
+        or view controls.
 
     Returns
     -------
