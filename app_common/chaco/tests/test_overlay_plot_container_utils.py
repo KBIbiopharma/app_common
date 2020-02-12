@@ -1,5 +1,4 @@
 from unittest import TestCase
-import numpy as np
 from chaco.api import add_default_axes, create_line_plot
 from app_common.chaco.overlay_plot_container_utils import align_renderer
 
