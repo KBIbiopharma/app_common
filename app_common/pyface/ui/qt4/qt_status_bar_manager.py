@@ -4,9 +4,13 @@ from pyface.ui.qt4.action.status_bar_manager import StatusBarManager
 
 
 class QtStatusBarManager(StatusBarManager):
-    """ A status bar manager realizes itself in a status bar control. """
+    """ A status bar manager realizes itself in a status bar control.
 
-    # Duration of appearance of the messages
+    Subclassed from the Qt implementation to expose the ability to optionally
+    change the style sheet of the widget and time messages out.
+    """
+
+    # Duration of appearance of the messages in milliseconds
     message_duration_ms = Int
 
     # Qt styling of the status bar
@@ -17,11 +21,7 @@ class QtStatusBarManager(StatusBarManager):
             self.status_bar.setStyleSheet("QStatusBar{%s}" % value)
 
     def _show_messages(self):
-        """ Display the list of messages. """
-
-        # FIXME v3: At the moment we just string them together but we may
-        # decide to put all but the first message into separate widgets.  We
-        # probably also need to extend the API to allow a "message" to be a
-        # widget - depends on what wx is capable of.
+        """ Display the list of messages with the optional timing.
+        """
         self.status_bar.showMessage("  ".join(self.messages),
                                     msecs=self.message_duration)
