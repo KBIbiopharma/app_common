@@ -14,7 +14,10 @@ logger = logging.getLogger(__name__)
 
 def add_scatter_inspectors(plot, datasets=None, include_overlay=True,
                            threshold=5, **kwargs):
-    """ Add scatter data inspector tools and an optional text overlay to plot.
+    """ Add scatter data inspector tools and optional text overlay to plot.
+
+    The purpose is to be able to display interactively the position of each
+    point of the renderers contained in an OverlayPlotContainer.
 
     An inspector per renderer will be created, to listen to mouse hover events
     on all data points. But there is no need for multiple overlays: a single
@@ -24,6 +27,16 @@ def add_scatter_inspectors(plot, datasets=None, include_overlay=True,
     ----------
     plot : chaco OverlayPlotContainer
         Chaco plot containing the renderers to add scatter inspectors.
+
+    datasets : list
+        List of dataframes containing the data displayed in each renderer.
+
+    include_overlay : bool
+        Whether to include the overlay.
+
+    threshold : int
+        The threshold, in pixels, around the cursor location to search for
+        points. (Passed to the chaco ScatterInspector.)
     """
     inspectors = []
 
