@@ -1,0 +1,10 @@
+[
+  "apptools",
+  "chaco",
+  "pandas",
+  "pyqt",
+  "qt",
+  "traits",
+  "traitsui",
+  "scimath"
+]
