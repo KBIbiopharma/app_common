@@ -118,7 +118,7 @@ class deSerializer(HasStrictTraits):
         except (KeyError, AttributeError) as e:
             msg = "No active deserializer was found for class {}. Now " \
                   "searching in the legacy deserializers... (Error was {}.)"
-            logger.info(msg.format(klass, e))
+            logger.warning(msg.format(klass, e))
 
             default_deserializer = None
             use_default = False
