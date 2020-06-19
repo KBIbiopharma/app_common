@@ -2,13 +2,12 @@
 
 Remove when https://github.com/enthought/chaco/pull/514 is merged and in use.
 """
-from numpy import array, linspace, ndarray
+from numpy import arange, array, linspace, ndarray
 from chaco.api import AbstractDataSource, ArrayDataSource, \
-    ColormappedScatterPlot, ColorMapper, CMapImagePlot, ContourLinePlot, \
+    ColormappedScatterPlot, CMapImagePlot, ContourLinePlot, \
     DataRange2D, DataRange1D, GridDataSource, GridMapper, ImagePlot, jet, \
-    LinearMapper, LogMapper
+    LinearMapper, Spectral
 from chaco.plot_factory import add_default_grids, add_default_axes
-from chaco.color_mapper import ColorMapper
 from chaco.image_data import ImageData
 
 
