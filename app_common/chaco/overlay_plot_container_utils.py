@@ -6,7 +6,7 @@ flexibility power of the OverlayPlotContainer classes.
 
 
 def align_renderer(renderer, axis, dim="index"):
-    """ Align a renderer's index or value mapper along provided axis.
+    """ Align a renderer's index or value mapper along the provided axis.
 
     The purpose of this function is to align a renderer on an existing PlotAxis
     without the nuclear option of setting the renderer's mapper to the axis
@@ -33,3 +33,20 @@ def align_renderer(renderer, axis, dim="index"):
     mapper = getattr(renderer, dim + "_mapper")
     mapper.range.low = axis.mapper.range.low
     mapper.range.high = axis.mapper.range.high
+
+
+def align_renderers(renderer_list, axis, dim="index"):
+    """ Align all renderers index or value mappers along the provided axis.
+
+    Notes
+    -----
+    It's critical to add all renderer first, and then adjust renderer mappers
+    to the **final** axis range. otherwise, curves might be mis-aligned.
+    """
+    for renderer in renderer_list:
+        axis.mapper.range.add(getattr(renderer, dim))
+
+    for renderer in renderer_list:
+        mapper = getattr(renderer, dim + "_mapper")
+        mapper.range.low = axis.mapper.range.low
+        mapper.range.high = axis.mapper.range.high
