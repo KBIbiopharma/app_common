@@ -87,7 +87,7 @@ class Serializer(HasStrictTraits):
         serial_data as described in the build function.
         """
         serial_data = self.get_serial_data_base(obj)
-        serial_data.update({'data': self.get_data(obj)})
+        serial_data['data'] = self.get_data(obj)
         serial_data.update(self.get_instance_data(obj))
         return serial_data
 
@@ -123,11 +123,19 @@ class Serializer(HasStrictTraits):
         instance_data = {}
         for attr_name in self.attr_names_to_serialize(obj):
             next_object = getattr(obj, attr_name)
-            instance_data.update({attr_name: self.serialize(next_object)})
+            try:
+                instance_data[attr_name] = self.serialize(next_object)
+            except ValueError as e:
+                msg = "Failed to serialize the attr {} of a {}. Error was {}."
+                msg = msg.format(attr_name, obj, e)
+                logger.exception(msg)
+                raise ValueError(msg)
+
         return instance_data
 
     def attr_names_to_serialize(self, obj):
-        """ Collect all standard traits that """
+        """ Collect all standard traits that need to be serialized.
+        """
         candidates = set(obj.trait_names()) - TRAIT_NAMES_TO_SKIP
         final = set()
         for attr_name in candidates:
@@ -142,7 +150,7 @@ class Serializer(HasStrictTraits):
         try:
             serializer = self.serializer_map[klass + '_Serializer']()
         except (KeyError, AttributeError) as e:
-            msg = ("Failed to serialize {}. The {} class does not have a "
+            msg = ("Failed to serialize {}: the {} class does not have a "
                    "Serializer. Error was {}.")
             msg = msg.format(obj, klass, e)
             logger.exception(msg)
