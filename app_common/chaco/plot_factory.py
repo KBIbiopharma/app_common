@@ -235,7 +235,6 @@ def _process_2d_bounds(bounds, array_data, axis, cell_plot=True):
             return bounds
 
 
-
 def _create_data_sources(data, index_sort="none"):
     """
     Returns datasources for index and value based on the inputs.  Assumes that
