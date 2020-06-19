@@ -1,5 +1,6 @@
 """ Overlay to display the coordinate of a scatter point hovered over.
 """
+import logging
 import pandas as pd
 
 from traits.api import Bool, Callable, Float, Instance, List, on_trait_change,\
@@ -8,26 +9,53 @@ from chaco.api import TextBoxOverlay
 from chaco.scatterplot import ScatterPlot
 from app_common.chaco.scatter_inspector import ScatterInspector
 
+logger = logging.getLogger(__name__)
+
 
 def add_scatter_inspectors(plot, datasets=None, include_overlay=True,
                            threshold=5, **kwargs):
-    """ Add scatter data inspector tools and an optional text overlay to plot.
+    """ Add scatter data inspector tools and optional text overlay to plot.
+
+    The purpose is to be able to display interactively the position of each
+    point of the renderers contained in an OverlayPlotContainer.
 
     An inspector per renderer will be created, to listen to mouse hover events
-    on all data points. But there is not need for multiple overlays: a single
+    on all data points. But there is no need for multiple overlays: a single
     one can listen to all inspectors.
+
+    Parameters
+    ----------
+    plot : chaco OverlayPlotContainer
+        Chaco plot containing the renderers to add scatter inspectors.
+
+    datasets : list
+        List of dataframes containing the data displayed in each renderer.
+
+    include_overlay : bool
+        Whether to include the overlay.
+
+    threshold : int
+        The threshold, in pixels, around the cursor location to search for
+        points. (Passed to the chaco ScatterInspector.)
     """
     inspectors = []
 
     if isinstance(datasets, pd.DataFrame):
         datasets = [datasets]
     elif datasets is None:
-        datasets = [pd.DataFrame(plot.data.arrays)]
+        try:
+            datasets = [pd.DataFrame(plot.data.arrays)]
+        except AttributeError as e:
+            msg = "AttributeError raised: if the provided plot doesn't own a" \
+                  " 'data' attribute with an ArrayPlotData containing all " \
+                  "the data, the datasets must be explicitly provided. " \
+                  "(Error was: '{}')".format(e)
+            logger.exception(msg)
+            raise ValueError(msg)
 
-    assert len(datasets) == len(plot.plots)
+    assert len(datasets) == len(plot.components)
 
-    for data, (name, renderers) in zip(datasets, plot.plots.items()):
-        renderer = renderers[0]
+    for data, renderer in zip(datasets, plot.components):
         if not isinstance(renderer, ScatterPlot):
             continue
 
