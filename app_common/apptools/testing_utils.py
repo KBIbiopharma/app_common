@@ -85,6 +85,12 @@ def revert_changes_to_text_file(filepath):
 @contextmanager
 def temp_bringup_ui_for(obj, kind=None):
     """ Create UI and temporarily bring it up to allow operations while it's up
+
+    Examples
+    --------
+    >>> obj = <whatever view object you want to build the UI for>
+    >>> with temp_bring_up_for(obj) as ui:
+    ...     <add explorations and assersions on the ui object>
     """
     ui = obj.edit_traits(kind=kind)
     try:
@@ -95,6 +101,11 @@ def temp_bringup_ui_for(obj, kind=None):
 
 def assert_obj_gui_works(obj, kind=None):
     """ Make sure an object's TraitsUI can be built and visualized.
+
+    Examples
+    --------
+    >>> obj = <whatever view object you want to build the UI for>
+    >>> assert_obj_gui_works(obj)
     """
     ui = obj.edit_traits(kind=kind)
     ui.dispose()
