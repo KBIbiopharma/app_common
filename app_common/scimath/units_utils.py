@@ -1,5 +1,6 @@
 """ Utilities around unit conversion and unit management.
 """
+import six
 import logging
 from copy import copy
 from six import string_types
@@ -8,10 +9,57 @@ import numpy as np
 from scimath.units.api import convert, dimensionless, unit_parser, UnitArray, \
     UnitScalar
 from scimath.units.unit import InvalidConversion
+from .more_units import CUSTOM_UNITS_CONVERTERS
 
 logger = logging.getLogger(__name__)
 
 parse_unit = unit_parser.parse_unit
+
+
+def convert_units(unitted_data, tgt_unit, **kwargs):
+    """ Convert unitted data to the units specified by `tgt_unit`.
+
+    Parameters
+    ----------
+    unitted_data : UnitScalar or UnitArray
+        The data to be converted to `tgt_unit`
+
+    tgt_unit : scimath.unit or str
+        The target units for `unitted_data`.
+
+    kwargs : dict
+        Additional arguments that may be needed by custom converters for
+        special units.
+
+    Returns
+    -------
+    UnitScalar or UnitArray
+        The converted data.
+    """
+    if isinstance(tgt_unit, six.string_types):
+        tgt_unit = unit_parser.parse_unit(tgt_unit)
+
+    if isinstance(unitted_data, UnitScalar):
+        unit_klass = UnitScalar
+    elif isinstance(unitted_data, UnitArray):
+        unit_klass = UnitArray
+    else:
+        msg = "The `unitted_data` argument must be an instance of either " \
+              "scimath's UnitScalar or UnitArray but got {}."
+        msg = msg.format(unitted_data.__class__.__name__)
+        logger.exception(msg)
+        raise ValueError(msg)
+
+    src_unit = unitted_data.units
+    if (src_unit.label, tgt_unit.label) in CUSTOM_UNITS_CONVERTERS:
+        converter = CUSTOM_UNITS_CONVERTERS[(src_unit.label, tgt_unit.label)]
+        unitted_data = converter(unitted_data, **kwargs)
+        return unit_klass(unitted_data, units=tgt_unit)
+
+    else:
+        data = np.array(unitted_data.tolist())
+        data = convert(data, src_unit, tgt_unit)
+        return unit_klass(data, units=tgt_unit)
 
 
 def unitted_list_to_array(unitted_list, target_unit=None):
