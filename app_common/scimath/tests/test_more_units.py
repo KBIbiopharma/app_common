@@ -1,4 +1,4 @@
-""" Tests for the utility functions in chromatography_units module. """
+""" Tests for the utility functions in more_units module. """
 
 from unittest import TestCase
 from numpy.testing import assert_allclose
