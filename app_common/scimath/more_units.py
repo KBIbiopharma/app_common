@@ -1,5 +1,6 @@
 """ More units.
 """
+import sys
 import logging
 from copy import copy
 import numpy as np
@@ -178,3 +179,7 @@ def convert_units(unitted_data, tgt_unit, **kwargs):
         data = np.array(unitted_data.tolist())
         data = convert(data, src_unit, tgt_unit)
         return unit_klass(data, units=tgt_unit)
+
+
+current_module = sys.modules[__name__]
+unit_parser.parser.extend(current_module)

@@ -6,5 +6,6 @@
   "qt",
   "traits",
   "traitsui",
-  "scimath"
+  "scimath",
+  "scipy"
 ]
