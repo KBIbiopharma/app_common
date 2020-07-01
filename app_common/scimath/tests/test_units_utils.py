@@ -1,13 +1,54 @@
 from unittest import TestCase
+from numpy.testing import assert_allclose
 
 from scimath.units.api import UnitArray, UnitScalar
 from scimath.units.length import meter
+from scimath.units.unit import InvalidConversion
 
-from app_common.scimath.units_utils import unit_scalars_almost_equal, \
-    units_almost_equal, unitarray_to_unitted_list, unitted_list_to_array, \
-    has_mass_units, has_volume_units, has_same_unit_type_as
+from app_common.scimath.units_utils import convert_units, \
+    unit_scalars_almost_equal, units_almost_equal, unitarray_to_unitted_list, \
+    unitted_list_to_array, has_mass_units, has_volume_units, \
+    has_same_unit_type_as
 from app_common.scimath.assertion_utils import assert_unit_array_almost_equal,\
     assert_unit_scalar_almost_equal
+from app_common.scimath import more_units
+
+
+class TestConvertUnits(TestCase):
+
+    # Tests -------------------------------------------------------------------
+
+    def test_scalar_convert_units(self):
+        scalar_data = UnitScalar(1, units=more_units.length.m)
+        conv_data = convert_units(scalar_data, more_units.length.cm)
+        self.assertEqual(conv_data,
+                         UnitScalar(100, units=more_units.length.cm))
+
+        # convert back to original units and check
+        conv_data_2 = convert_units(conv_data, scalar_data.units)
+        self.assertEqual(conv_data_2, scalar_data)
+
+    def test_array_convert_units(self):
+        array_data = UnitArray([1, 2, 3], units=more_units.length.m)
+        conv_data = convert_units(array_data, more_units.length.cm)
+        assert_allclose(conv_data.tolist(), (100 * array_data).tolist())
+        self.assertEqual(conv_data.units, more_units.length.cm)
+
+        # convert back to original units and check
+        conv_data_2 = convert_units(conv_data, array_data.units)
+        assert_allclose(conv_data_2.tolist(), array_data.tolist())
+        self.assertEqual(conv_data_2.units, array_data.units)
+
+    def test_invalid_arguments(self):
+        scalar_data = UnitScalar(1, units=more_units.length.m)
+
+        # raise error if the units are not consistent
+        with self.assertRaises(InvalidConversion):
+            convert_units(scalar_data, more_units.volume.liter)
+
+        # raise error if the data does not have units
+        with self.assertRaises(ValueError):
+            convert_units(1, more_units.volume.liter)
 
 
 class TestAssertUnitScalarEqual(TestCase):

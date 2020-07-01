@@ -3,13 +3,10 @@
 import sys
 import logging
 from copy import copy
-import numpy as np
 
-from scimath.units.unit_scalar import UnitScalar, UnitArray
-from scimath.units import convert, dimensionless, substance, volume, mass, \
-    length, electromagnetism, time
+from scimath.units import dimensionless, substance, volume, mass, length, \
+    electromagnetism, time
 from scimath.units.api import unit_parser
-import six
 
 logger = logging.getLogger(__name__)
 
@@ -100,6 +97,8 @@ g_per_liter_resin.label = "g/Liter_resin"
 def convert_g_per_liter_resin_to_cv(unitted_data, **kwargs):
     """ To convert to volume in CV, divide by the product concentration in g/L.
     """
+    from .units_utils import convert_units
+
     if "concentration" not in kwargs:
         msg = "Trying to convert a volume in 'g per liter of resin' " \
               "requires a product concentration, but 'concentration' was" \
@@ -115,6 +114,8 @@ def convert_g_per_liter_resin_to_cv(unitted_data, **kwargs):
 def convert_cv_to_g_per_liter_resin(unitted_data, **kwargs):
     """ To convert to volume in g/L, multiply by product concentration in CV.
     """
+    from .units_utils import convert_units
+
     if "concentration" not in kwargs:
         msg = "Trying to convert a volume in 'g per liter of resin' " \
               "requires a product concentration, but 'concentration' was" \
@@ -133,52 +134,6 @@ CUSTOM_UNITS_CONVERTERS = {
     (column_volumes.label, g_per_liter_resin.label):
         convert_cv_to_g_per_liter_resin,
 }
-
-
-def convert_units(unitted_data, tgt_unit, **kwargs):
-    """ Convert unitted data to the units specified by `tgt_unit`.
-
-    Parameters
-    ----------
-    unitted_data : UnitScalar or UnitArray
-        The data to be converted to `tgt_unit`
-
-    tgt_unit : scimath.unit or str
-        The target units for `unitted_data`.
-
-    kwargs : dict
-        Additional arguments that may be needed by custom converters for
-        special units.
-
-    Returns
-    -------
-    UnitScalar or UnitArray
-        The converted data.
-    """
-    if isinstance(tgt_unit, six.string_types):
-        tgt_unit = unit_parser.parse_unit(tgt_unit)
-
-    if isinstance(unitted_data, UnitScalar):
-        unit_klass = UnitScalar
-    elif isinstance(unitted_data, UnitArray):
-        unit_klass = UnitArray
-    else:
-        msg = "The `unitted_data` argument must be an instance of either " \
-              "scimath's UnitScalar or UnitArray but got {}."
-        msg = msg.format(unitted_data.__class__.__name__)
-        logger.exception(msg)
-        raise ValueError(msg)
-
-    src_unit = unitted_data.units
-    if (src_unit.label, tgt_unit.label) in CUSTOM_UNITS_CONVERTERS:
-        converter = CUSTOM_UNITS_CONVERTERS[(src_unit.label, tgt_unit.label)]
-        unitted_data = converter(unitted_data, **kwargs)
-        return unit_klass(unitted_data, units=tgt_unit)
-
-    else:
-        data = np.array(unitted_data.tolist())
-        data = convert(data, src_unit, tgt_unit)
-        return unit_klass(data, units=tgt_unit)
 
 
 current_module = sys.modules[__name__]
