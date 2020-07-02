@@ -18,7 +18,7 @@ class ConstraintsPlotContainerManager(HasStrictTraits):
 
     #: The collection of Plots in the container. Each Plot is mapped to a key
     #: for caching, and hide/show purposes.
-    plot_map = Dict(Any, Instance(BasePlotContainer))
+    plot_map = Dict
 
     #: Remove a Plot from the container if there are no curves being rendered.
     #: Set to `False` to avoid the resizing of the Plots in the container
@@ -65,11 +65,13 @@ class ConstraintsPlotContainerManager(HasStrictTraits):
     def add_plot(self, plot_key, plot, position=None):
         """ Add new Plot to container, or update if key already exists.
         """
-        self.plot_map[plot_key] = plot
         if position is None:
+            position = len(self.plot_map)
             self.container.add(plot)
         else:
             self.container.insert(position, plot)
+
+        self.plot_map[plot_key] = (plot, position)
         self.refresh_container()
 
     def delete_plot(self, plot_key, plot):
@@ -82,25 +84,27 @@ class ConstraintsPlotContainerManager(HasStrictTraits):
     def hide_plot(self, plot_key):
         """ Retrieve Plot for specific log type if exists, create  it otherwise
         """
-        plot = self.plot_map.get(plot_key, None)
-        if plot is None:
+        result = self.plot_map.get(plot_key, None)
+        if result is None:
             msg = "Plot key requested ({}) not in cache".format(plot_key)
             logger.error(msg)
             raise ValueError(msg)
 
+        plot, position = result
         self.container.remove(plot)
         self.refresh_container()
 
     def show_plot(self, plot_key):
         """ Retrieve Plot for specific log type if exists, create  it otherwise
         """
-        plot = self.plot_map.get(plot_key, None)
-        if plot is None:
+        result = self.plot_map.get(plot_key, None)
+        if result is None:
             msg = "Plot key requested ({}) not in cache".format(plot_key)
             logger.error(msg)
             raise ValueError(msg)
 
-        self.container.add(plot)
+        plot, position = result
+        self.container.insert(position, plot)
         self.refresh_container()
 
     def _create_container(self):
