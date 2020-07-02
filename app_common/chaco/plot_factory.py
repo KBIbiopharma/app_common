@@ -148,8 +148,9 @@ def create_cmap_scatter_plot(data=None, index_bounds=None, value_bounds=None,
 
 def create_contour_plot(data=None, contour_type="line", xbounds=None,
                         ybounds=None, levels=None, widths=None,
-                        origin='bottom left', orientation="h", x_type="linear",
-                        y_type="linear", **styles):
+                        origin='bottom left', orientation="h",
+                        index_mapper_class=LinearMapper,
+                        value_mapper_class=LinearMapper, **styles):
     # Create the index and add its datasources to the appropriate ranges
     xs = _process_2d_bounds(xbounds, data, 1, cell_plot=False)
     ys = _process_2d_bounds(ybounds, data, 0, cell_plot=False)
@@ -157,6 +158,16 @@ def create_contour_plot(data=None, contour_type="line", xbounds=None,
     index = GridDataSource(xs, ys, sort_order=('ascending', 'ascending'))
     range2d = DataRange2D()
     range2d.add(index)
+    if index_mapper_class == LinearMapper:
+        x_type = "linear"
+    else:
+        x_type = "log"
+
+    if value_mapper_class == LinearMapper:
+        y_type = "linear"
+    else:
+        y_type = "log"
+
     mapper = GridMapper(x_type=x_type, y_type=y_type, range=range2d)
 
     value_ds = ImageData(data=data, value_depth=1)
@@ -172,8 +183,9 @@ def create_contour_plot(data=None, contour_type="line", xbounds=None,
 
 
 def create_img_plot(data=None, colormap=None, xbounds=None, ybounds=None,
-                    origin='bottom left', orientation="h", x_type="linear",
-                    y_type="linear", **styles):
+                    origin='bottom left', orientation="h",
+                    index_mapper_class=LinearMapper,
+                    value_mapper_class=LinearMapper, **styles):
     """ Create an ImagePlot renderer to represent the provided data.
     """
     if not isinstance(data, ndarray) or len(data.shape) != 2:
@@ -196,6 +208,16 @@ def create_img_plot(data=None, colormap=None, xbounds=None, ybounds=None,
     index = GridDataSource(xs, ys, sort_order=('ascending', 'ascending'))
     range2d = DataRange2D()
     range2d.add(index)
+    if index_mapper_class == LinearMapper:
+        x_type = "linear"
+    else:
+        x_type = "log"
+
+    if value_mapper_class == LinearMapper:
+        y_type = "linear"
+    else:
+        y_type = "log"
+
     mapper = GridMapper(x_type=x_type, y_type=y_type, range=range2d)
 
     if len(data.shape) == 3:
