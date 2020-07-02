@@ -14,6 +14,12 @@ logger = logging.getLogger(__name__)
 
 
 def create_line_plot(index_mapper_class=LinearMapper, **kwargs):
+    """ Expand chaco implementation.
+
+    Remove when https://github.com/enthought/chaco/pull/514 is merged and in
+    use.
+    """
+
     from chaco.plot_factory import create_line_plot
 
     alpha = kwargs.pop("alpha", None)
@@ -29,6 +35,11 @@ def create_line_plot(index_mapper_class=LinearMapper, **kwargs):
 
 def create_scatter_plot(index_mapper_class=LinearMapper,
                         value_mapper_class=LinearMapper, **kwargs):
+    """ Expand chaco implementation.
+
+    Remove when https://github.com/enthought/chaco/pull/514 is merged and in
+    use.
+    """
     from chaco.plot_factory import create_scatter_plot
 
     alpha = kwargs.pop("alpha", None)
@@ -49,6 +60,11 @@ def create_scatter_plot(index_mapper_class=LinearMapper,
 
 
 def create_bar_plot(index_mapper_class=LinearMapper, **kwargs):
+    """ Expand chaco implementation.
+
+    Remove when https://github.com/enthought/chaco/pull/514 is merged and in
+    use.
+    """
     from chaco.plot_factory import create_bar_plot
 
     alpha = kwargs.pop("alpha", None)
