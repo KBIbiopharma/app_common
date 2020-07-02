@@ -10,6 +10,8 @@ from chaco.api import AbstractDataSource, ArrayDataSource, \
 from chaco.plot_factory import add_default_grids, add_default_axes
 from chaco.image_data import ImageData
 
+logger = logging.getLogger(__name__)
+
 
 def create_line_plot(index_mapper_class=LinearMapper, **kwargs):
     from chaco.plot_factory import create_line_plot
@@ -86,10 +88,12 @@ def create_cmap_scatter_plot(data=None, index_bounds=None, value_bounds=None,
     elif len(data) > 4 or len(data) < 3:
         msg = "Colormapped marker/segment plots require (index, value, color)"\
               "or (index, value, color, width) data"
+        logger.exception(msg)
         raise ValueError(msg)
     elif len(data) == 4:
         index, value, color_data, size = _create_data_sources(data)
         msg = "Size arrays not implemented yet."
+        logger.exception(msg)
         raise NotImplementedError(msg)
 
         # size_range = DataRange1D()
