@@ -1,7 +1,7 @@
 """ Extended renderer factories.
-
-Remove when https://github.com/enthought/chaco/pull/514 is merged and in use.
 """
+import logging
+
 from numpy import arange, array, linspace, ndarray
 from chaco.api import AbstractDataSource, ArrayDataSource, \
     ColormappedScatterPlot, CMapImagePlot, ContourLinePlot, \
@@ -11,37 +11,58 @@ from chaco.plot_factory import add_default_grids, add_default_axes
 from chaco.image_data import ImageData
 
 
-def create_line_plot(**kwargs):
+def create_line_plot(index_mapper_class=LinearMapper, **kwargs):
     from chaco.plot_factory import create_line_plot
 
     alpha = kwargs.pop("alpha", None)
     renderer = create_line_plot(**kwargs)
+    if not isinstance(renderer.index_mapper, index_mapper_class):
+        renderer.index_mapper = index_mapper_class(
+            range=renderer.index_mapper.range
+        )
     if alpha:
         renderer.alpha = alpha
     return renderer
 
 
-def create_scatter_plot(**kwargs):
+def create_scatter_plot(index_mapper_class=LinearMapper,
+                        value_mapper_class=LinearMapper, **kwargs):
     from chaco.plot_factory import create_scatter_plot
 
     alpha = kwargs.pop("alpha", None)
     renderer = create_scatter_plot(**kwargs)
+    if not isinstance(renderer.index_mapper, index_mapper_class):
+        renderer.index_mapper = index_mapper_class(
+            range=renderer.index_mapper.range
+        )
+
+    if not isinstance(renderer.value_mapper, value_mapper_class):
+        renderer.value_mapper = value_mapper_class(
+            range=renderer.value_mapper.range
+        )
+
     if alpha:
         renderer.alpha = alpha
     return renderer
 
 
-def create_bar_plot(**kwargs):
+def create_bar_plot(index_mapper_class=LinearMapper, **kwargs):
     from chaco.plot_factory import create_bar_plot
 
     alpha = kwargs.pop("alpha", None)
     renderer = create_bar_plot(**kwargs)
+    if not isinstance(renderer.index_mapper, index_mapper_class):
+        renderer.index_mapper = index_mapper_class(
+            range=renderer.index_mapper.range
+        )
     if alpha:
         renderer.alpha = alpha
     return renderer
 
 
 def create_cmap_scatter_plot(data=None, index_bounds=None, value_bounds=None,
+                             index_mapper_class=LinearMapper,
+                             value_mapper_class=LinearMapper,
                              color_bounds=None, color_mapper=jet,
                              orientation="h", marker="circle", marker_size=4,
                              bgcolor="transparent", outline_color="black",
@@ -84,14 +105,14 @@ def create_cmap_scatter_plot(data=None, index_bounds=None, value_bounds=None,
     else:
         index_range = DataRange1D()
     index_range.add(index)
-    index_mapper = LinearMapper(range=index_range)
+    index_mapper = index_mapper_class(range=index_range)
 
     if value_bounds is not None:
         value_range = DataRange1D(low=value_bounds[0], high=value_bounds[1])
     else:
         value_range = DataRange1D()
     value_range.add(value)
-    value_mapper = LinearMapper(range=value_range)
+    value_mapper = value_mapper_class(range=value_range)
 
     if color_bounds is not None:
         color_range = DataRange1D(low=color_bounds[0], high=color_bounds[1])
@@ -127,7 +148,8 @@ def create_cmap_scatter_plot(data=None, index_bounds=None, value_bounds=None,
 
 def create_contour_plot(data=None, contour_type="line", xbounds=None,
                         ybounds=None, levels=None, widths=None,
-                        origin='bottom left', orientation="h", **styles):
+                        origin='bottom left', orientation="h", x_type="linear",
+                        y_type="linear", **styles):
     # Create the index and add its datasources to the appropriate ranges
     xs = _process_2d_bounds(xbounds, data, 1, cell_plot=False)
     ys = _process_2d_bounds(ybounds, data, 0, cell_plot=False)
@@ -135,7 +157,7 @@ def create_contour_plot(data=None, contour_type="line", xbounds=None,
     index = GridDataSource(xs, ys, sort_order=('ascending', 'ascending'))
     range2d = DataRange2D()
     range2d.add(index)
-    mapper = GridMapper(range=range2d)
+    mapper = GridMapper(x_type=x_type, y_type=y_type, range=range2d)
 
     value_ds = ImageData(data=data, value_depth=1)
 
@@ -150,12 +172,15 @@ def create_contour_plot(data=None, contour_type="line", xbounds=None,
 
 
 def create_img_plot(data=None, colormap=None, xbounds=None, ybounds=None,
-                    origin='bottom left', orientation="h", **styles):
+                    origin='bottom left', orientation="h", x_type="linear",
+                    y_type="linear", **styles):
     """ Create an ImagePlot renderer to represent the provided data.
     """
     if not isinstance(data, ndarray) or len(data.shape) != 2:
-        raise ValueError("create_img_plot expects a 2D numpy array to make a "
-                         "cmap image plot.")
+        msg = "Received a {}. create_img_plot expects a 2D numpy array to " \
+              "make a cmap image plot.".format(type(data))
+        logger.exception(msg)
+        raise ValueError(msg)
 
     # Create the index and add its datasources to the appropriate ranges
     xs = _process_2d_bounds(xbounds, data, 1, cell_plot=True)
@@ -171,7 +196,7 @@ def create_img_plot(data=None, colormap=None, xbounds=None, ybounds=None,
     index = GridDataSource(xs, ys, sort_order=('ascending', 'ascending'))
     range2d = DataRange2D()
     range2d.add(index)
-    mapper = GridMapper(range=range2d)
+    mapper = GridMapper(x_type=x_type, y_type=y_type, range=range2d)
 
     if len(data.shape) == 3:
         cls = ImagePlot
