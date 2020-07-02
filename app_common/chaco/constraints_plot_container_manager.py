@@ -1,7 +1,6 @@
 import logging
 
-from traits.api import Any, Bool, Dict, Enum, HasStrictTraits, Instance, Int
-from chaco.base_plot_container import BasePlotContainer
+from traits.api import Bool, Dict, Enum, HasStrictTraits, Instance, Int
 from enable.layout.api import align, vbox, hbox, grid
 
 from app_common.chaco.constraints_plot_container import \
@@ -50,7 +49,10 @@ class ConstraintsPlotContainerManager(HasStrictTraits):
     padding_right = Int(10)
 
     def init(self):
-        """ Initialize the plots.
+        """ Initialize the plot container.
+
+        Note done automatically, maybe in case the user wants to edit the
+        layout before actually creating the container.
         """
         self._create_container()
 
@@ -121,33 +123,23 @@ class ConstraintsPlotContainerManager(HasStrictTraits):
         """ Returns a list of constraints that is meant to be passed to
         a ConstraintsContainer.
         """
-        constraints = []
-
         # NOTE: inequality expressions seem a lil shaky in that it requires
         # some tweaking to finding a set of constraints that works well !
         # But this is much better than manually tweaking padding etc.
 
-        # Another option is to simply calculate the values of the height etc
-        # and set it as simple inequalities (as opposed to using height as
-        # another variable in the expressions)
-
         # FIXME: also, the layouts can prob. be specified as input similar to
         # the other plot properties.
 
-        # split components into groups. For now, just UV and others
         components = container.components
-
-        # NOTE: looks like every comp in the container needs a constraint,
-        # else they get messed up or ignored.
 
         # create an ordered (top to bottom) list of components
         layout_helper = LAYOUT_MAPS[self.layout_type]
-        constraints.extend([
+        constraints = [
             layout_helper(*components, spacing=self.layout_spacing,
                           margins=self.layout_margins),
             # align widths of all components to be the same
             align('layout_width', *components),
             # align heights of *other* components to be the same
             align('layout_height', *components),
-        ])
+        ]
         return constraints
