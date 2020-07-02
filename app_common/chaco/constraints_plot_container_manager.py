@@ -1,6 +1,6 @@
 import logging
 
-from traits.api import Bool, Dict, Enum, HasStrictTraits, Instance, Int
+from traits.api import Dict, Enum, HasStrictTraits, Instance, Int
 from enable.layout.api import align, vbox, hbox, grid
 
 from app_common.chaco.constraints_plot_container import \
@@ -18,11 +18,6 @@ class ConstraintsPlotContainerManager(HasStrictTraits):
     #: The collection of Plots in the container. Each Plot is mapped to a key
     #: for caching, and hide/show purposes.
     plot_map = Dict
-
-    #: Remove a Plot from the container if there are no curves being rendered.
-    #: Set to `False` to avoid the resizing of the Plots in the container
-    #: when the empty Plot is removed.
-    remove_empty_plot = Bool(True)
 
     #: The instance of PlotContainer that contains all the Plots.
     container = Instance(ConstraintsPlotContainer)
