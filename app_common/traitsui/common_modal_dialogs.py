@@ -161,10 +161,12 @@ class StrRequesterDlg(BaseDlg):
     def _view_width_default(self):
         return 500
 
+
 class StringSelectorHandler(Handler):
     def do_scan(self, info):
         info.ui.result = True
         info.ui.dispose()
+
 
 class GuiStringSelector(BaseDlg):
     """ General string chooser.
@@ -207,6 +209,7 @@ class GuiStringSelector(BaseDlg):
             handler=StringSelectorHandler(),
         )
         return view
+
     def _show_label_default(self):
         return bool(self.label)
 
