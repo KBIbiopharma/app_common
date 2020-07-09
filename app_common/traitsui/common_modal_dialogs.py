@@ -3,8 +3,9 @@
 import logging
 
 from traits.api import Any, Bool, Dict, Either, Enum, Float, HasStrictTraits, \
-    List, Set, Str
-from traitsui.api import EnumEditor, Item, OKCancelButtons, View
+    List, Set, Str, Property
+from traitsui.api import EnumEditor, Item, OKCancelButtons, View, Handler
+from traitsui.menu import Action, CancelButton
 
 from .text_with_validation_editors import TextEditor, \
     TextWithExcludedValuesEditor
@@ -160,6 +161,10 @@ class StrRequesterDlg(BaseDlg):
     def _view_width_default(self):
         return 500
 
+class StringSelectorHandler(Handler):
+    def do_scan(self, info):
+        info.ui.result = True
+        info.ui.dispose()
 
 class GuiStringSelector(BaseDlg):
     """ General string chooser.
@@ -173,6 +178,12 @@ class GuiStringSelector(BaseDlg):
     label = Str("Selected string")
 
     ui_mode = Enum(["enum"])
+
+    is_string_selected = Property(Bool(False), depends_on="selected_string, "
+                                                          "string_options, "
+                                                          "string_options[]")
+
+    ok_button = Action(name='OK', enabled_when='is_string_selected')
 
     def traits_view(self):
         if self.ui_mode == "enum":
@@ -192,9 +203,13 @@ class GuiStringSelector(BaseDlg):
         view = self.view_klass(
             *groups,
             title=self.title,
-            buttons=OKCancelButtons
+            buttons=[self.ok_button, CancelButton],
+            handler=StringSelectorHandler(),
         )
         return view
-
     def _show_label_default(self):
         return bool(self.label)
+
+    def _get_is_string_selected(self):
+        return len(self.string_options) > 0 and \
+               self.selected_string in self.string_options
