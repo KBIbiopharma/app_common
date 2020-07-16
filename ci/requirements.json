@@ -2,7 +2,7 @@
   "apptools",
   "chaco",
   "pandas",
-  "pyqt",
+  "pyqt5",
   "qt",
   "traits",
   "traitsui",
