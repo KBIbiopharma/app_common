@@ -6,6 +6,8 @@ from os.path import abspath
 
 from traits.api import Bool, HasStrictTraits, HasTraits, Int, List, Property, \
     Str
+from traits.trait_list_object import TraitListObject
+from traits.trait_dict_object import TraitDictObject
 
 DEFAULT_PREFERENCE_FILENAME = "preferences.yaml"
 
@@ -114,9 +116,6 @@ def to_python_type(value):
     Convert values to pure python types so resulting yaml doesn't contain
     complex (brittle) object types.
     """
-    from traits.trait_list_object import TraitListObject
-    from traits.trait_dict_object import TraitDictObject
-
     if isinstance(value, (bool, int, float, str)):
         return value
 
