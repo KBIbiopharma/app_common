@@ -1,8 +1,10 @@
 from unittest import TestCase
 import os
 from os.path import isfile
+import yaml
 
-from traits.api import Instance, Int
+from traits.api import Instance, Int, List
+from traits.trait_handlers import TraitListObject
 
 from app_common.traits.assertion_utils import assert_has_traits_almost_equal
 from app_common.apptools.preferences import BasePreferenceGroup, \
@@ -35,14 +37,35 @@ class TestPreferencesSerialization(TestCase):
         )
         assert_has_traits_almost_equal(prefs, new_prefs)
 
+    def test_create_save_load_no_trait_types(self):
+        app_preferences = AppPreferenceGroup(recent_files=["foo.txt",
+                                                           "bar.csv"])
+        app_preferences.dirty = False
+        prefs = Preferences(app_preferences=app_preferences)
+        prefs.to_preference_file(self.temp_pref_file)
+        new_prefs = Preferences.from_preference_file(
+            self.temp_pref_file
+        )
+        assert_has_traits_almost_equal(prefs, new_prefs)
+
+        self.assertIsInstance(prefs.app_preferences.recent_files,
+                              TraitListObject)
+        # Make sure what was serialized was a python list:
+        with open(self.temp_pref_file) as f:
+            data = yaml.load(f)
+        recent_files = data['app_preferences']['recent_files']
+        self.assertIsInstance(recent_files, list)
+
 
 class AppPreferenceGroup(BasePreferenceGroup):
     """ Storage for Application related preferences.
     """
     console_logging_level = Int(30)
 
+    recent_files = List
+
     def _attrs_to_store_default(self):
-        return ["console_logging_level"]
+        return ["console_logging_level", "recent_files"]
 
 
 PREFERENCE_CLASS_MAP = {
