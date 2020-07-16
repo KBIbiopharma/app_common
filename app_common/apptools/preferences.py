@@ -6,8 +6,7 @@ from os.path import abspath
 
 from traits.api import Bool, HasStrictTraits, HasTraits, Int, List, Property, \
     Str
-from traits.trait_list_object import TraitListObject
-from traits.trait_dict_object import TraitDictObject
+from traits.trait_types import TraitListObject, TraitDictObject
 
 DEFAULT_PREFERENCE_FILENAME = "preferences.yaml"
 

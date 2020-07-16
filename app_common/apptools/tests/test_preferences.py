@@ -2,8 +2,11 @@ from unittest import TestCase
 import os
 from os.path import isfile
 
+from traits.api import Instance, Int
+
 from app_common.traits.assertion_utils import assert_has_traits_almost_equal
-from app_common.apptools.preferences import BasePreferenceGroup
+from app_common.apptools.preferences import BasePreferenceGroup, \
+    BasePreferences
 
 
 class TestPreferencesSerialization(TestCase):
@@ -15,7 +18,7 @@ class TestPreferencesSerialization(TestCase):
             os.remove(self.temp_pref_file)
 
     def test_create_save_load(self):
-        prefs = PictsViewerPreferences()
+        prefs = Preferences()
         prefs.to_preference_file(self.temp_pref_file)
         new_prefs = Preferences.from_preference_file(
             self.temp_pref_file
@@ -25,7 +28,7 @@ class TestPreferencesSerialization(TestCase):
     def test_create_save_load_custom_app_prefs(self):
         app_preferences = AppPreferenceGroup(console_logging_level=20)
         app_preferences.dirty = False
-        prefs = PictsViewerPreferences(app_preferences=app_preferences)
+        prefs = Preferences(app_preferences=app_preferences)
         prefs.to_preference_file(self.temp_pref_file)
         new_prefs = Preferences.from_preference_file(
             self.temp_pref_file
