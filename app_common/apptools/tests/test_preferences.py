@@ -52,7 +52,7 @@ class TestPreferencesSerialization(TestCase):
                               TraitListObject)
         # Make sure what was serialized was a python list:
         with open(self.temp_pref_file) as f:
-            data = yaml.load(f)
+            data = yaml.load(f, Loader=yaml.SafeLoader)
         recent_files = data['app_preferences']['recent_files']
         self.assertIsInstance(recent_files, list)
 
