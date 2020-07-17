@@ -1,7 +1,12 @@
 [
+  "app_updater",
   "apptools",
   "chaco",
+  "encore",
+  "h5py",
+  "imageio",
   "pandas",
+  "psutil",
   "pyqt5",
   "pyyaml",
   "qt",
