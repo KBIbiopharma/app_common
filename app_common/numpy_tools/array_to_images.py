@@ -7,21 +7,33 @@ from numpy import min, max
 import numpy as np
 from PIL import Image
 
-_errstr = "Mode is unknown or incompatible with input array shape."
+_ERRSTR = "Mode is unknown or incompatible with input array shape."
 
 logger = logging.getLogger(__name__)
 
 
 def write_array_to_image(img_array, filepath, writer_func=None, **kwargs):
-    """ API interface function to store a particle image array (2D) to a file.
+    """ Interface function to store an image array (2D) to a file.
 
-    Supported file formats include PNG, JPEG, HDF5. Use specific writer
+    Parameters
+    ----------
+    img_array : np.array
+
+    filepath : str
+        File path to save to. Format is controlled by extension of the file
+        path. Supported file formats include PNG, JPEG, HDF5.
+
+    writer_func : callable
+        Special writer to use. Must return True on success.
+
+    kwargs : dict
+        Keyword arguments for the writer function.
     """
     if writer_func is None:
         ext = splitext(filepath)[1].lower()
-        writers = {".png": write_array_to_png_image,
-                   ".jpeg": write_array_to_jpeg_image,
-                   ".jpg": write_array_to_jpeg_image,
+        writers = {".png": write_array_to_image_file,
+                   ".jpeg": write_array_to_image_file,
+                   ".jpg": write_array_to_image_file,
                    ".hdf5": write_array_to_h5_file,
                    ".h5": write_array_to_h5_file}
         writer_func = writers[ext]
@@ -32,30 +44,7 @@ def write_array_to_image(img_array, filepath, writer_func=None, **kwargs):
         logger.debug("Array written to {}".format(filepath))
 
 
-def write_array_to_jpeg_image(img_array, filepath, mode=None):
-    """ Dump a numpy array to a JPEG file (LOSSY!).
-
-    Parameters
-    ----------
-    img_array : ndarray
-        Numpy array to serialize.
-
-    filepath : str
-        Path to the image file to create.
-
-    mode : str
-        Mode for the conversion to PIL.Image. Leave as None for uint8 arrays.
-        Requesting it as an argument to avoid an if statement for situation
-        where MANY files must be created from arrays with the same dtype.
-    """
-    # Create a PIL image and then save:
-    img = toimage(img_array, low=min(img_array), high=max(img_array),
-                  mode=mode)
-    img.save(filepath)
-    return True
-
-
-def write_array_to_png_image(img_array, filepath, mode=None):
+def write_array_to_image_file(img_array, filepath, mode=None):
     """ Dump an numpy array to a PNG file (LOSSLESS if uint8/uint16 dtype!).
 
     Parameters
@@ -106,8 +95,10 @@ def write_array_to_h5_file(img_array, filepath, node, node_shape=None,
     return True
 
 
-# Copy of scipy.misc.toimage since it was deprecated in scipy 1.2+ ------------
-
+# -----------------------------------------------------------------------------
+# Copy of scipy.misc.toimage since it was deprecated in scipy 1.2+.
+# Image.fromarray doesn't offer the same functionalities.
+# -----------------------------------------------------------------------------
 
 def bytescale(data, cmin=None, cmax=None, high=255, low=0):
     """ Byte scales an array (image).
@@ -239,7 +230,7 @@ def toimage(arr, high=255, low=0, cmin=None, cmax=None, pal=None,
             data32 = data.astype(np.uint32)
             image = Image.frombytes(mode, shape, data32.tostring())
         else:
-            raise ValueError(_errstr)
+            raise ValueError(_ERRSTR)
         return image
 
     # if here then 3-d array with a 3 or a 4 in the shape length.
@@ -277,7 +268,7 @@ def toimage(arr, high=255, low=0, cmin=None, cmax=None, pal=None,
             mode = 'RGBA'
 
     if mode not in ['RGB', 'RGBA', 'YCbCr', 'CMYK']:
-        raise ValueError(_errstr)
+        raise ValueError(_ERRSTR)
 
     if mode in ['RGB', 'YCbCr']:
         if numch != 3:
