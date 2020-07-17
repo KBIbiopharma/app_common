@@ -6,6 +6,7 @@ from os.path import abspath
 
 from traits.api import Bool, HasStrictTraits, HasTraits, Int, List, Property, \
     Str
+from traits.trait_handlers import TraitListObject, TraitDictObject
 
 DEFAULT_PREFERENCE_FILENAME = "preferences.yaml"
 
@@ -31,7 +32,7 @@ class BasePreferenceGroup(HasTraits):
     def to_data(self):
         data = {}
         for attr_name in self.attrs_to_store:
-            data[attr_name] = getattr(self, attr_name)
+            data[attr_name] = to_python_type(getattr(self, attr_name))
         return data
 
 
@@ -54,11 +55,11 @@ class BasePreferences(HasStrictTraits):
     version = Int
 
     @classmethod
-    def from_preference_file(cls, pref_filepath):
+    def from_preference_file(cls, pref_filepath, loader=yaml.Loader):
         """ Create a Preference instance from a preference file.
         """
         with open(pref_filepath, "r") as pref_file:
-            data = yaml.load(pref_file, Loader=yaml.FullLoader)
+            data = yaml.load(pref_file, Loader=loader)
             loaded_version = data["version"]
 
         preferences_traits = {}
@@ -77,7 +78,7 @@ class BasePreferences(HasStrictTraits):
         prefs.dirty = False
         return prefs
 
-    def to_preference_file(self, target_file=None):
+    def to_preference_file(self, target_file=None, indent=4):
         """ Store current preferences to file.
         """
         if target_file is None:
@@ -89,7 +90,7 @@ class BasePreferences(HasStrictTraits):
 
         logger.debug("Storing preferences to {}".format(abspath(target_file)))
         with open(target_file, "w") as pref_file:
-            yaml.dump(data, pref_file, default_flow_style=False, indent=4)
+            yaml.dump(data, pref_file, default_flow_style=False, indent=indent)
 
     def _preference_filepath_default(self):
         return DEFAULT_PREFERENCE_FILENAME
@@ -106,3 +107,24 @@ class BasePreferences(HasStrictTraits):
                 return True
 
         return False
+
+
+def to_python_type(value):
+    """ Convert values to pure python types.
+
+    Convert values to pure python types so resulting yaml doesn't contain
+    complex (brittle) object types.
+    """
+    if isinstance(value, (bool, int, float, str)):
+        return value
+
+    if isinstance(value, TraitListObject):
+        return list(value)
+
+    if isinstance(value, TraitDictObject):
+        return dict(value)
+
+    msg = "The value {} (type {}) isn't a pure python type but isn't " \
+          "converted because the case isn't handled. Please report this issue."
+    logger.warning(msg)
+    return value

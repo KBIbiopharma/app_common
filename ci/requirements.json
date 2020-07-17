@@ -3,6 +3,7 @@
   "chaco",
   "pandas",
   "pyqt5",
+  "pyyaml",
   "qt",
   "traits",
   "traitsui",
