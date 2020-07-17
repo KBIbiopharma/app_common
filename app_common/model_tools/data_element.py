@@ -1,7 +1,6 @@
 from uuid import UUID, uuid4
 
 from traits.api import Bool, HasStrictTraits, Instance
-from traitsui.api import Item, View
 
 from app_common.traits.custom_trait_factories import Key
 
@@ -24,13 +23,12 @@ class DataElement(HasStrictTraits):
     #: A unique ID for the object
     uuid = Instance(UUID)
 
-    # -------------------------------------------------------------------------
-    # TraitsUI view
-    # -------------------------------------------------------------------------
+    def traits_view(self):
+        from traitsui.api import Item, View
 
-    view = View(
-        Item("name")
-    )
+        return View(
+            Item("name")
+        )
 
     # Initialization methods --------------------------------------------------
 
