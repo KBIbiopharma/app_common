@@ -4,7 +4,7 @@ from numpy.testing import assert_array_equal
 import os
 
 from app_common.numpy_tools.array_to_images import write_array_to_image
-from scipy.misc import imread
+from imageio import imread
 
 
 class TestWriteParticleImage(TestCase):
