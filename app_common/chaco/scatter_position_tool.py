@@ -121,6 +121,13 @@ class DataframeScatterOverlay(TextBoxOverlay):
     #: Formatting(s) for the DF values, optionally by columns. E.g. ".3f"
     val_fmts = Either(Dict, Str)
 
+    def __init__(self, **traits):
+        if "inspectors" in traits and \
+                isinstance(traits["inspectors"], ScatterInspector):
+            traits["inspectors"] = [traits["inspectors"]]
+
+        super(DataframeScatterOverlay, self).__init__(**traits)
+
     # Traits listener methods -------------------------------------------------
 
     @on_trait_change('inspectors:inspector_event')
