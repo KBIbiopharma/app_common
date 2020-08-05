@@ -106,7 +106,9 @@ def bytescale(data, cmin=None, cmax=None, high=255, low=0):
     Byte scaling means converting the input image to uint8 dtype and scaling
     the range to ``(low, high)`` (default 0-255).
     If the input image already has dtype uint8, no scaling is done.
-    This function is only available if Python Imaging Library (PIL) is installed.
+    This function is only available if Python Imaging Library (PIL) is
+    installed.
+
     Parameters
     ----------
     data : ndarray
@@ -171,7 +173,8 @@ def bytescale(data, cmin=None, cmax=None, high=255, low=0):
 def toimage(arr, high=255, low=0, cmin=None, cmax=None, pal=None,
             mode=None, channel_axis=None):
     """Takes a numpy array and returns a PIL image.
-    This function is only available if Python Imaging Library (PIL) is installed.
+    This function is only available if Python Imaging Library (PIL) is
+    installed.
     The mode of the PIL image depends on the array shape and the `pal` and
     `mode` keywords.
     For 2-D arrays, if `pal` is a valid (N,3) byte-array giving the RGB values
