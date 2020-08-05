@@ -121,8 +121,7 @@ class DataframeScatterOverlay(TextBoxOverlay):
     #: Formatting(s) for the DF values, optionally by columns. E.g. ".3f"
     val_fmts = Either(Dict, Str)
 
-    def _val_fmts_default(self):
-        return ""
+    # Traits listener methods -------------------------------------------------
 
     @on_trait_change('inspectors:inspector_event')
     def scatter_point_found(self, inspector, name, event):
@@ -134,6 +133,8 @@ class DataframeScatterOverlay(TextBoxOverlay):
 
         self.visible = len(self.text) > 0
         self.component.request_redraw()
+
+    # Traits initialization methods -------------------------------------------
 
     def _message_for_data_default(self):
         def show_data(inspector, data_idx):
@@ -153,6 +154,9 @@ class DataframeScatterOverlay(TextBoxOverlay):
                 elements.append(col_element)
             return "\n".join(elements)
         return show_data
+
+    def _val_fmts_default(self):
+        return ""
 
 
 if __name__ == "__main__":
