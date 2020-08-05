@@ -53,7 +53,7 @@ class TestScatterPositionTool(TestCase, UnittestTools, EnableTestAssistant):
         self.assertEqual(len(self.plot.overlays), 2)
 
     def test_add_tool_to_plot_manually_inspectors_as_obj(self):
-        """ Make sure we """
+        """ Make sure we can build the overlay passing a single inspector."""
         renderer = self.plot.plot(("x", "y"), type="scatter")[0]
         inspector = DataframeScatterInspector(data=self.df, component=renderer)
         renderer.tools.append(inspector)
