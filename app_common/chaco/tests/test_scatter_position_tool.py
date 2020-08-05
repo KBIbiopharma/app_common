@@ -2,12 +2,14 @@ from unittest import skipIf, TestCase
 import numpy as np
 import os
 import pandas as pd
+from traits.testing.unittest_tools import UnittestTools
+from enable.testing import EnableTestAssistant
 
 try:
     from chaco.api import ArrayPlotData, Plot
 
     from app_common.chaco.scatter_position_tool import add_scatter_inspectors,\
-        DataframeScatterInspector
+        DataframeScatterInspector, DataframeScatterOverlay
 except ImportError:
     pass
 
@@ -15,7 +17,7 @@ NO_UI_BACKEND = os.environ.get("ETS_TOOLKIT", "qt4") == "null"
 
 
 @skipIf(NO_UI_BACKEND, "No UI backend")
-class TestScatterPositionTool(TestCase):
+class TestScatterPositionTool(TestCase, UnittestTools, EnableTestAssistant):
     def setUp(self):
         num_points = 10
         self.x = np.arange(num_points)
@@ -49,3 +51,68 @@ class TestScatterPositionTool(TestCase):
 
         # Default plot has a title and a legend, both overlays
         self.assertEqual(len(self.plot.overlays), 2)
+
+    def test_add_tool_to_plot_manually(self):
+        renderer = self.plot.plot(("x", "y"), type="scatter")[0]
+        inspector = DataframeScatterInspector(data=self.df, component=renderer)
+        renderer.tools.append(inspector)
+        overlay = DataframeScatterOverlay(inspectors=[inspector])
+        self.plot.overlays.append(overlay)
+
+        self.assertEqual(overlay.text, "")
+        with self.assertTraitChanges(inspector, "inspector_event"):
+            with self.assertTraitChanges(overlay, "text"):
+                x, y = self.plot.map_screen(data_array=[self.x[0], self.y[0]])
+                self.mouse_move(inspector, x=x, y=y)
+
+            self.assertEqual(overlay.text, "x: 0\ny: 0")
+
+    def test_add_tool_to_plot_manually_control_single_formatting(self):
+        renderer = self.plot.plot(("x", "y"), type="scatter")[0]
+        inspector = DataframeScatterInspector(data=self.df, component=renderer)
+        renderer.tools.append(inspector)
+        overlay = DataframeScatterOverlay(inspectors=[inspector],
+                                          val_fmts=":.2f")
+        self.plot.overlays.append(overlay)
+
+        self.assertEqual(overlay.text, "")
+        with self.assertTraitChanges(inspector, "inspector_event"):
+            with self.assertTraitChanges(overlay, "text"):
+                x, y = self.plot.map_screen(data_array=[self.x[0], self.y[0]])
+                self.mouse_move(inspector, x=x, y=y)
+
+            self.assertEqual(overlay.text, "x: 0.00\ny: 0.00")
+
+    def test_add_tool_to_plot_manually_control_custom_formatting(self):
+        renderer = self.plot.plot(("x", "y"), type="scatter")[0]
+        inspector = DataframeScatterInspector(data=self.df, component=renderer)
+        renderer.tools.append(inspector)
+        overlay = DataframeScatterOverlay(inspectors=[inspector],
+                                          val_fmts={"y": ":.2f"})
+        self.plot.overlays.append(overlay)
+
+        self.assertEqual(overlay.text, "")
+        with self.assertTraitChanges(inspector, "inspector_event"):
+            with self.assertTraitChanges(overlay, "text"):
+                x, y = self.plot.map_screen(data_array=[self.x[0], self.y[0]])
+                self.mouse_move(inspector, x=x, y=y)
+
+            self.assertEqual(overlay.text, "x: 0\ny: 0.00")
+
+    def test_add_tool_to_plot_manually_control_custom_message(self):
+        renderer = self.plot.plot(("x", "y"), type="scatter")[0]
+        inspector = DataframeScatterInspector(data=self.df, component=renderer)
+        renderer.tools.append(inspector)
+        overlay = DataframeScatterOverlay(
+            inspectors=[inspector],
+            message_for_data=lambda inspector, data_idx: "foobar"
+        )
+        self.plot.overlays.append(overlay)
+
+        self.assertEqual(overlay.text, "")
+        with self.assertTraitChanges(inspector, "inspector_event"):
+            with self.assertTraitChanges(overlay, "text"):
+                x, y = self.plot.map_screen(data_array=[self.x[0], self.y[0]])
+                self.mouse_move(inspector, x=x, y=y)
+
+            self.assertEqual(overlay.text, "foobar")

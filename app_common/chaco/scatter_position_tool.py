@@ -3,8 +3,8 @@
 import logging
 import pandas as pd
 
-from traits.api import Bool, Callable, Float, Instance, List, on_trait_change,\
-    Str
+from traits.api import Bool, Callable, Dict, Either, Float, Instance, List, \
+    on_trait_change, Str
 from chaco.api import TextBoxOverlay
 from chaco.scatterplot import ScatterPlot
 from app_common.chaco.scatter_inspector import ScatterInspector
@@ -88,12 +88,13 @@ def add_scatter_inspectors(plot, datasets=None, include_overlay=True,
 
 
 class DataframeScatterInspector(ScatterInspector):
-
+    """ Inspector detecting and broadcasting hover events, holding data as DF.
+    """
     data = Instance(pd.DataFrame)
 
 
 class DataframeScatterOverlay(TextBoxOverlay):
-    """ Overlay for displaying information from a DataInspectorTool.
+    """ Overlay for displaying information from DataInspectorTool hover events.
     """
 
     #: The inspector tool(s) which trigger hover events
@@ -111,6 +112,11 @@ class DataframeScatterOverlay(TextBoxOverlay):
     border_color = "none"
 
     include_index = Bool
+
+    val_fmts = Either(Dict, Str)
+
+    def _val_fmts_default(self):
+        return ""
 
     @on_trait_change('inspectors:inspector_event')
     def scatter_point_found(self, inspector, name, event):
@@ -132,7 +138,13 @@ class DataframeScatterOverlay(TextBoxOverlay):
                 elements = []
 
             for col in data.index:
-                elements.append("{}: {}".format(col, data[col]))
+                if isinstance(self.val_fmts, dict):
+                    col_element = "{}: {%s}" % self.val_fmts.get(col, "")
+                else:
+                    col_element = "{}: {%s}" % self.val_fmts
+
+                col_element = col_element.format(col, data[col])
+                elements.append(col_element)
             return "\n".join(elements)
         return show_data
 
