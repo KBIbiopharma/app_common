@@ -1,5 +1,4 @@
 from unittest import TestCase, skipIf
-import os
 from pyface.toolkit import toolkit_object
 
 from app_common.traitsui.common_modal_dialogs import request_string, \
@@ -17,7 +16,7 @@ if toolkit == 'qt4':
     elif qt_api == "pyqt5":
         from PyQt5.QtWidgets import QLineEdit, QComboBox
     else:
-        raise ImportError("QT_API={} not supported!".format(api))
+        raise ImportError("QT_API={} not supported!".format(qt_api))
 
 NO_UI_BACKEND = toolkit == "null"
 
