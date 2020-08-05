@@ -3,8 +3,8 @@
 import logging
 import pandas as pd
 
-from traits.api import Bool, Callable, Float, Instance, List, on_trait_change,\
-    Str
+from traits.api import Bool, Callable, Dict, Either, Float, Instance, List, \
+    on_trait_change, Str
 from chaco.api import TextBoxOverlay
 from chaco.scatterplot import ScatterPlot
 from app_common.chaco.scatter_inspector import ScatterInspector
@@ -88,12 +88,13 @@ def add_scatter_inspectors(plot, datasets=None, include_overlay=True,
 
 
 class DataframeScatterInspector(ScatterInspector):
-
+    """ Inspector detecting and broadcasting hover events, holding data as DF.
+    """
     data = Instance(pd.DataFrame)
 
 
 class DataframeScatterOverlay(TextBoxOverlay):
-    """ Overlay for displaying information from a DataInspectorTool.
+    """ Overlay for displaying information from DataInspectorTool hover events.
     """
 
     #: The inspector tool(s) which trigger hover events
@@ -102,15 +103,25 @@ class DataframeScatterOverlay(TextBoxOverlay):
     #: Function which takes an inspector and an index and returns info string
     message_for_data = Callable
 
+    #: Background color of the text overlay
     bgcolor = Str("black")
 
+    #: Transparency of the text overlay
     alpha = Float(0.6)
 
+    #: Text color of the text overlay
     text_color = Str("white")
 
+    #: Border color for the text overlay
     border_color = "none"
 
+    #: Whether to include index value, or just column values in text overlay
     include_index = Bool
+
+    #: Formatting(s) for the DF values, optionally by columns. E.g. ".3f"
+    val_fmts = Either(Dict, Str)
+
+    # Traits listener methods -------------------------------------------------
 
     @on_trait_change('inspectors:inspector_event')
     def scatter_point_found(self, inspector, name, event):
@@ -123,6 +134,8 @@ class DataframeScatterOverlay(TextBoxOverlay):
         self.visible = len(self.text) > 0
         self.component.request_redraw()
 
+    # Traits initialization methods -------------------------------------------
+
     def _message_for_data_default(self):
         def show_data(inspector, data_idx):
             data = inspector.data.iloc[data_idx]
@@ -132,9 +145,18 @@ class DataframeScatterOverlay(TextBoxOverlay):
                 elements = []
 
             for col in data.index:
-                elements.append("{}: {}".format(col, data[col]))
+                if isinstance(self.val_fmts, dict):
+                    col_element = "{}: {%s}" % self.val_fmts.get(col, "")
+                else:
+                    col_element = "{}: {%s}" % self.val_fmts
+
+                col_element = col_element.format(col, data[col])
+                elements.append(col_element)
             return "\n".join(elements)
         return show_data
+
+    def _val_fmts_default(self):
+        return ""
 
 
 if __name__ == "__main__":
