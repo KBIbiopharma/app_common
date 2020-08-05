@@ -103,16 +103,22 @@ class DataframeScatterOverlay(TextBoxOverlay):
     #: Function which takes an inspector and an index and returns info string
     message_for_data = Callable
 
+    #: Background color of the text overlay
     bgcolor = Str("black")
 
+    #: Transparency of the text overlay
     alpha = Float(0.6)
 
+    #: Text color of the text overlay
     text_color = Str("white")
 
+    #: Border color for the text overlay
     border_color = "none"
 
+    #: Whether to include index value, or just column values in text overlay
     include_index = Bool
 
+    #: Formatting(s) for the DF values, optionally by columns. E.g. ".3f"
     val_fmts = Either(Dict, Str)
 
     def _val_fmts_default(self):
