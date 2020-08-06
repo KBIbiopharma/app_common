@@ -81,3 +81,9 @@ class TestRequestSelectingString(TestCase):
             self.assertIsInstance(ui._editors[2].control, QComboBox)
         finally:
             ui.dispose()
+
+    def test_is_string_selected_takes_correct_values(self):
+        selector = GuiStringSelector(string_options=list("abcd"))
+        self.assertFalse(selector.is_string_selected)
+        selector.selected_string = "a"
+        self.assertTrue(selector.is_string_selected)

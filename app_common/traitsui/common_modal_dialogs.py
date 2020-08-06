@@ -220,5 +220,5 @@ class GuiStringSelector(BaseDlg):
 
 
 if __name__ == "__main__":
-    y = list()
+    y = list('abcde')
     request_string_selection(y)
