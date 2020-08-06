@@ -1,21 +1,22 @@
 from unittest import TestCase, skipIf
-import os
+from pyface.toolkit import toolkit_object
 
 from app_common.traitsui.common_modal_dialogs import request_string, \
     request_string_selection, StrRequesterDlg, GuiStringSelector
 from app_common.apptools.testing_utils import assert_obj_gui_works
-from traits.etsconfig.api import ETSConfig  # noqa
 
-toolkit = ETSConfig.toolkit
+toolkit = toolkit_object.toolkit
 
 if toolkit == 'qt4':
-    api = os.environ.get("QT_API", "")
-    if api == "pyside":
+    from pyface.qt import qt_api
+    if qt_api == "pyside":
         from PySide.QtGui import QLineEdit, QComboBox
-    elif api in ["pyqt", ""]:
+    elif qt_api == "pyqt":
         from PyQt4.QtGui import QLineEdit, QComboBox
+    elif qt_api == "pyqt5":
+        from PyQt5.QtWidgets import QLineEdit, QComboBox
     else:
-        raise ImportError("QT_API={} not supported!".format(api))
+        raise ImportError("QT_API={} not supported!".format(qt_api))
 
 NO_UI_BACKEND = toolkit == "null"
 

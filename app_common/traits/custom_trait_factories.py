@@ -79,7 +79,7 @@ def _positive_integer(value=0, **kwargs):
         msg = msg.format(type(value))
         raise TraitError(msg)
 
-    return Range(low=0, high=sys.maxint, value=value, **kwargs)
+    return Range(low=0, high=sys.maxsize, value=value, **kwargs)
 
 
 PositiveInt = _positive_integer

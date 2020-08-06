@@ -1,6 +1,6 @@
 from unittest import TestCase, skipIf
 import os
-from scipy.ndimage import imread
+from imageio import imread
 
 try:
     from chaco.api import ArrayPlotData, GridPlotContainer, Plot
