@@ -3,13 +3,13 @@
 import logging
 
 from traits.api import Any, Bool, Dict, Either, Enum, Float, HasStrictTraits, \
-    List, Set, Str, Property
-from traitsui.api import EnumEditor, Item, OKCancelButtons, View, Handler
-from traitsui.menu import Action, CancelButton
+    List, Set, Str, Property, Instance
+from traitsui.api import EnumEditor, Item, OKCancelButtons, View, Handler, \
+    Action, CancelButton
 
-from .text_with_validation_editors import TextEditor, \
+from app_common.traitsui.text_with_validation_editors import TextEditor, \
     TextWithExcludedValuesEditor
-from .common_traitsui_groups import make_window_title_group
+from app_common.traitsui.common_traitsui_groups import make_window_title_group
 
 logger = logging.getLogger(__name__)
 
@@ -182,10 +182,9 @@ class GuiStringSelector(BaseDlg):
     ui_mode = Enum(["enum"])
 
     is_string_selected = Property(Bool(False), depends_on="selected_string, "
-                                                          "string_options, "
                                                           "string_options[]")
 
-    ok_button = Action(name='OK', enabled_when='is_string_selected')
+    ok_button = Instance(Action)
 
     def traits_view(self):
         if self.ui_mode == "enum":
@@ -214,5 +213,12 @@ class GuiStringSelector(BaseDlg):
         return bool(self.label)
 
     def _get_is_string_selected(self):
-        return len(self.string_options) > 0 and \
-               self.selected_string in self.string_options
+        return self.selected_string in self.string_options
+
+    def _ok_button_default(self):
+        return Action(name='OK', enabled_when='is_string_selected')
+
+
+if __name__ == "__main__":
+    y = list()
+    request_string_selection(y)
