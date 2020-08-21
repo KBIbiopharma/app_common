@@ -2,7 +2,7 @@ from os.path import dirname, isfile, join
 from subprocess import check_output
 from collections import namedtuple
 
-__version__ = "0.12.4.dev0"
+__version__ = "0.12.4"
 
 
 try:
