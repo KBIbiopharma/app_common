@@ -87,7 +87,7 @@ from contextlib import contextmanager
 
 import click
 
-PKG_NAME = "pybleau"
+PKG_NAME = "app_common"
 
 supported_combinations = {
     '3.6': {'pyside2', 'pyqt5', "wx"},
@@ -105,11 +105,7 @@ DEV_DEPENDENCIES = "ci/dev_requirements.json"
 dependencies = set(json.load(open(DEPENDENCIES)) +
                    json.load(open(DEV_DEPENDENCIES)))
 
-dependencies.remove("app_common")
-
-source_dependencies = {
-    "app_common": "git+https://github.com/KBIbiopharma/app_common#egg=app_common",
-}
+source_dependencies = {}
 
 # Additional toolkit-independent dependencies for demo testing
 test_dependencies = set()
@@ -118,6 +114,7 @@ extra_dependencies = {
     # XXX once pyside2 is available in EDM, we will want it here
     'pyside2': set(),
     'pyqt5': {'pyqt5'},
+    'wx': set(),
 }
 
 runtime_dependencies = {}
