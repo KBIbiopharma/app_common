@@ -56,8 +56,11 @@ class C(HasTraits):
 
 
 class D(HasTraits):
-    """ Testing class"""
     x = Float
+
+
+class E(HasTraits):
+    a = Array
 
 
 @skipUnless(SCIMATH_AVAILABLE, "scimath not available")
@@ -174,6 +177,13 @@ class TestIsHasTraitsAlmostEqual(TestCase):
         self.assertNotEqual(is_has_traits_almost_equal(c1, c2), EQUAL)
         self.assertEqual(is_has_traits_almost_equal(c1, c2, ignore=['b_int']),
                          EQUAL)
+
+    def test_array_dtype(self):
+        e1 = E(a=np.array([1, 2], dtype=int))
+        e2 = E(a=np.array([1., 2.], dtype=float))
+        self.assertEqual(is_has_traits_almost_equal(e1, e2), EQUAL)
+        is_equal = is_has_traits_almost_equal(e1, e2, check_dtype=True)
+        self.assertNotEqual(is_equal, EQUAL)
 
 
 @skipUnless(SCIMATH_AVAILABLE, "scimath not available")
