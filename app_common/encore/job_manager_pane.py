@@ -216,7 +216,7 @@ class JobManagerPane(TraitsDockPane):
         return len(self.job_manager._pending_jobs)
 
     def _get_avg_job_duration(self):
-        if not self.job_results:
+        if not self.last_run_times:
             return nan
 
         avg_job_duration = nanmean(array(self.last_run_times))
