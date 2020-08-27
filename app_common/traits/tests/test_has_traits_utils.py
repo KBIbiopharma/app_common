@@ -199,3 +199,15 @@ class TestIsValAlmostEqual(TestCase):
         a1 = np.array(list("abcde"))
         a2 = np.array(list("abcde"))
         self.assertEqual(is_val_almost_equal(a1, a2), EQUAL)
+
+    def test_array_different_int_dtype(self):
+        a1 = np.array([1, 2, 3, 4], dtype="int32")
+        a2 = np.array([1, 2, 3, 4], dtype="int64")
+        self.assertEqual(is_val_almost_equal(a1, a2), EQUAL)
+        self.assertFalse(is_val_almost_equal(a1, a2, check_dtype=True)[0])
+
+    def test_array_different_str_dtype(self):
+        a1 = np.array(list("abcde"), dtype='|S1')
+        a2 = np.array(list("abcde"), dtype='|S2')
+        self.assertEqual(is_val_almost_equal(a1, a2), EQUAL)
+        self.assertFalse(is_val_almost_equal(a1, a2, check_dtype=True)[0])
