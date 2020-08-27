@@ -24,7 +24,7 @@ IGNORE_TYPES = (BuiltinFunctionType, BuiltinMethodType, FunctionType,
 
 
 def is_has_traits_almost_equal(obj1, obj2, attr_name="", eps=1e-9, ignore=(),
-                               check_type=True):
+                               check_type=True, check_dtype=False):
     """ Test if 2 traits objects are almost equal up to a certain precision.
 
     Parameters
@@ -93,6 +93,7 @@ def is_has_traits_almost_equal(obj1, obj2, attr_name="", eps=1e-9, ignore=(),
                                                     eps=eps, ignore=ignore)
         else:
             equal, msg = is_val_almost_equal(val1, val2, trait_path, eps=eps,
+                                             check_dtype=check_dtype,
                                              ignore=ignore)
         if not equal:
             return False, msg
@@ -100,7 +101,8 @@ def is_has_traits_almost_equal(obj1, obj2, attr_name="", eps=1e-9, ignore=(),
     return True, ""
 
 
-def is_val_almost_equal(val1, val2, attr_name="", eps=1e-9, ignore=()):
+def is_val_almost_equal(val1, val2, attr_name="", check_dtype=False, eps=1e-9,
+                        ignore=()):
     """ Test if 2 values are almost equal up to a certain precision.
 
     Parameters
@@ -161,6 +163,14 @@ def is_val_almost_equal(val1, val2, attr_name="", eps=1e-9, ignore=()):
     elif isinstance(val1, np.ndarray):
         if val1.shape != val2.shape:
             return False, build_message(attr_name, val1, val2, "(shape)")
+        if check_dtype:
+            if val1.dtype != val2.dtype:
+                return False, build_message(attr_name, val1, val2, "(dtype)")
+        if np.issubdtype(val1.dtype, np.character):
+            # ndarray of string, bytes or unicode
+            # Convert to same dtype so element by element equality can be
+            # checked:
+            val2 = val2.astype(val1.dtype)
         if np.issubdtype(val1.dtype, np.character):
             # ndarray is a string or unicode
             if val1.size != sum(val1 == val2):
