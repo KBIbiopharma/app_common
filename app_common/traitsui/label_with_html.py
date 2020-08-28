@@ -1,33 +1,65 @@
 """ Fancier Label editor that supports wrapping text around and html code
 """
-from traits.api import Bool
-from traitsui.api import ColorTrait
+from traits.api import Bool, Int, Str
 from traitsui.api import Label as BaseLabel, TextEditor as TextEditorFactory
 from traitsui.qt4.text_editor import ReadonlyEditor as BaseTextEditorReadOnly
 
 
 class Label(BaseLabel):
-    """ Expanded Label with traits based styling
-    """
-    color = ColorTrait("black")
+    """ Expanded Label with traits based styling.
 
+    Examples
+    --------
+    >>> class Test(HasTraits):
+    ...     view = View(
+    ...         Label("blah"),
+    ...         Label("blah", color="red", bold=True),
+    ...         Label("blah", color="#f133a0", bold=True, italic=True),
+    ...         Label("blah", color="tomato", font_family="verdana",
+    ...               font_size=20)
+    ...     )
+    """
+    #: Text color. Must be a value understood by HTML.
+    color = Str("black")
+
+    #: Background color. Must be a value understood by HTML.
+    bg_color = Str
+
+    #: Name of the font family to use. Must be a value understood by HTML.
+    font_family = Str
+
+    #: Size of the font to use. Must be a value understood by HTML.
+    font_size = Int
+
+    #: Whether to use a bold font
     bold = Bool
 
+    #: Whether to use an italic font
     italic = Bool
 
     def __init__(self, label, **traits):
-        label = '<p style="color:{color}">{label}</p>'.format(
-            color=traits["color"], label=label
+        styles = {"color": traits.pop("color", "black")}
+        if "bg_color" in traits:
+            styles["background-color"] = traits.pop("bg_color")
+        if "font_family" in traits:
+            styles["font-family"] = traits.pop("font_family")
+        if "font_size" in traits:
+            styles["font-size"] = str(traits.pop("font_size")) + "px"
+
+        style_str = ";".join(["{}:{}".format(key, trait)
+                              for key, trait in styles.items()])
+        label = '<p style={style}>{label}</p>'.format(
+            style=style_str, label=label
         )
         if "bold" in traits:
-            traits.pop("bold")
             if traits["bold"]:
                 label = "<b>{label}</b>".format(label=label)
+            traits.pop("bold")
 
         if "italic" in traits:
-            traits.pop("italic")
             if traits["italic"]:
                 label = "<i>{label}</i>".format(label=label)
+            traits.pop("italic")
 
         super(Label, self).__init__(label=label, **traits)
 
@@ -78,7 +110,11 @@ if __name__ == "__main__":
         view = View(
             Label("blah"),
             Label("blah", color="red", bold=True),
-            Label("blah", color="#f133a0", bold=True, italic=True)
+            Label("blah", color="#f133a0", bold=True, italic=True),
+            Label("blah", color="tomato", font_family="verdana",
+                  font_size=48),
+            Label("blah", bg_color="powderblue"),
+            resizable=True, width=500
         )
 
     t = Test()
