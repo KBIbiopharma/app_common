@@ -15,7 +15,7 @@ class Label(BaseLabel):
     ...         Label("blah"),
     ...         Label("blah", color="red", bold=True),
     ...         Label("blah", color="#f133a0", bold=True, italic=True),
-    ...         Label("blah", color="tomato", font_family="verdana",
+    ...         Label("blah", bg_color="tomato", font_family="verdana",
     ...               font_size=20)
     ...     )
     """
