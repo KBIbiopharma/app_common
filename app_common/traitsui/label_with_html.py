@@ -1,7 +1,35 @@
 """ Fancier Label editor that supports wrapping text around and html code
 """
-from traitsui.api import TextEditor as TextEditorFactory
+from traits.api import Bool
+from traitsui.api import ColorTrait
+from traitsui.api import Label as BaseLabel, TextEditor as TextEditorFactory
 from traitsui.qt4.text_editor import ReadonlyEditor as BaseTextEditorReadOnly
+
+
+class Label(BaseLabel):
+    """ Expanded Label with traits based styling
+    """
+    color = ColorTrait("black")
+
+    bold = Bool
+
+    italic = Bool
+
+    def __init__(self, label, **traits):
+        label = '<p style="color:{color}">{label}</p>'.format(
+            color=traits["color"], label=label
+        )
+        if "bold" in traits:
+            traits.pop("bold")
+            if traits["bold"]:
+                label = "<b>{label}</b>".format(label=label)
+
+        if "italic" in traits:
+            traits.pop("italic")
+            if traits["italic"]:
+                label = "<i>{label}</i>".format(label=label)
+
+        super(Label, self).__init__(label=label, **traits)
 
 
 class LabelWithHyperlinks(TextEditorFactory):
@@ -45,6 +73,16 @@ class TextEditorReadOnlyWithExternalLinks(BaseTextEditorReadOnly):
 if __name__ == "__main__":
     from traits.api import HasTraits, Str
     from traitsui.api import View, Item
+
+    class Test(HasTraits):
+        view = View(
+            Label("blah"),
+            Label("blah", color="red", bold=True),
+            Label("blah", color="#f133a0", bold=True, italic=True)
+        )
+
+    t = Test()
+    t.configure_traits()
 
     class Test(HasTraits):
         text = Str(
