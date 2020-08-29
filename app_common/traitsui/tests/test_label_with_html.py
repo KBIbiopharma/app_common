@@ -3,7 +3,7 @@ from traits.api import HasTraits
 from traitsui.api import View
 
 from app_common.traitsui.label_with_html import Label
-from app_common.apptools.testing_utils import assert_obj_gui_works, temp_bringup_ui_for
+from app_common.apptools.testing_utils import temp_bringup_ui_for
 
 
 class A(HasTraits):
