@@ -14,7 +14,6 @@ class A(HasTraits):
         Label("blah", color="tomato", font_family="verdana",
               font_size=48),
         Label("blah", bg_color="powderblue"),
-        resizable=True, width=500
     )
 
 
