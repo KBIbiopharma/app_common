@@ -75,9 +75,9 @@ class TextEditorReadOnlyWithExternalLinks(BaseTextEditorReadOnly):
     """ Readonly text widget (similar to Label) where hyperlinks do open.
 
     FIXME: THis needs to be used with an Item for which resizable=True. From
-    Robert Kern: you can also override set_size_policy() in this class to get
-    this effect by default.
-    https://github.com/enthought/traitsui/blob/master/traitsui/qt4/editor.py#L396-L398  # noqa
+     Robert Kern: you can also override set_size_policy() in this class to get
+     this effect by default.
+     https://github.com/enthought/traitsui/blob/master/traitsui/qt4/editor.py#L396-L398  # noqa
     """
     def init(self, parent):
         super(BaseTextEditorReadOnly, self).init(parent)
