@@ -78,7 +78,8 @@ def add_scatter_inspectors(plot, datasets=None, include_overlay=True,
 
     # Create and attach the inspector overlay
     if include_overlay:
-        overlay = DataframeScatterOverlay(plot, inspectors=inspectors,
+        overlay = DataframeScatterOverlay(component=plot,
+                                          inspectors=inspectors,
                                           **kwargs)
         plot.overlays.append(overlay)
     else:
