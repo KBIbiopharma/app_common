@@ -36,6 +36,16 @@ class TestScatterPositionTool(TestCase, UnittestTools, EnableTestAssistant):
         # Default plot has a title and a legend, both overlays
         self.assertEqual(len(self.plot.overlays), 2)
 
+    def test_add_tool_to_scatter_with_overlay(self):
+        renderer = self.plot.plot(("x", "y"), type="scatter")[0]
+        add_scatter_inspectors(self.plot, include_overlay=True)
+        self.assertEqual(len(self.plot.tools), 0)
+        self.assertEqual(len(renderer.tools), 1)
+        scatter_tool = renderer.tools[0]
+        self.assertIsInstance(scatter_tool, DataframeScatterInspector)
+        # Default plot has a title and a legend, both overlays
+        self.assertEqual(len(self.plot.overlays), 3)
+
     def test_add_tool_to_multiple_scatter(self):
         renderer1 = self.plot.plot(("x", "y"), type="scatter")[0]
         renderer2 = self.plot.plot(("y", "x"), type="scatter")[0]
@@ -52,12 +62,24 @@ class TestScatterPositionTool(TestCase, UnittestTools, EnableTestAssistant):
         # Default plot has a title and a legend, both overlays
         self.assertEqual(len(self.plot.overlays), 2)
 
+    def test_add_tool_to_plot_component_as_positional_arg(self):
+        """ Make sure we can build the overlay passing component as pos. arg.
+        """
+        renderer = self.plot.plot(("x", "y"), type="scatter")[0]
+        inspector = DataframeScatterInspector(data=self.df, component=renderer)
+        renderer.tools.append(inspector)
+        overlay = DataframeScatterOverlay(component=self.plot,
+                                          inspectors=inspector)
+        self.plot.overlays.append(overlay)
+        self.assertEqual(overlay.inspectors, [inspector])
+
     def test_add_tool_to_plot_manually_inspectors_as_obj(self):
         """ Make sure we can build the overlay passing a single inspector."""
         renderer = self.plot.plot(("x", "y"), type="scatter")[0]
         inspector = DataframeScatterInspector(data=self.df, component=renderer)
         renderer.tools.append(inspector)
-        overlay = DataframeScatterOverlay(inspectors=inspector)
+        overlay = DataframeScatterOverlay(component=self.plot,
+                                          inspectors=inspector)
         self.plot.overlays.append(overlay)
 
         self.assertEqual(overlay.inspectors, [inspector])
@@ -66,7 +88,8 @@ class TestScatterPositionTool(TestCase, UnittestTools, EnableTestAssistant):
         renderer = self.plot.plot(("x", "y"), type="scatter")[0]
         inspector = DataframeScatterInspector(data=self.df, component=renderer)
         renderer.tools.append(inspector)
-        overlay = DataframeScatterOverlay(inspectors=[inspector])
+        overlay = DataframeScatterOverlay(component=self.plot,
+                                          inspectors=[inspector])
         self.plot.overlays.append(overlay)
 
         self.assertEqual(overlay.text, "")
@@ -81,7 +104,8 @@ class TestScatterPositionTool(TestCase, UnittestTools, EnableTestAssistant):
         renderer = self.plot.plot(("x", "y"), type="scatter")[0]
         inspector = DataframeScatterInspector(data=self.df, component=renderer)
         renderer.tools.append(inspector)
-        overlay = DataframeScatterOverlay(inspectors=[inspector],
+        overlay = DataframeScatterOverlay(component=self.plot,
+                                          inspectors=[inspector],
                                           val_fmts=":.2f")
         self.plot.overlays.append(overlay)
 
@@ -97,7 +121,8 @@ class TestScatterPositionTool(TestCase, UnittestTools, EnableTestAssistant):
         renderer = self.plot.plot(("x", "y"), type="scatter")[0]
         inspector = DataframeScatterInspector(data=self.df, component=renderer)
         renderer.tools.append(inspector)
-        overlay = DataframeScatterOverlay(inspectors=[inspector],
+        overlay = DataframeScatterOverlay(component=self.plot,
+                                          inspectors=[inspector],
                                           val_fmts={"y": ":.2f"})
         self.plot.overlays.append(overlay)
 
@@ -114,6 +139,7 @@ class TestScatterPositionTool(TestCase, UnittestTools, EnableTestAssistant):
         inspector = DataframeScatterInspector(data=self.df, component=renderer)
         renderer.tools.append(inspector)
         overlay = DataframeScatterOverlay(
+            component=self.plot,
             inspectors=[inspector],
             message_for_data=lambda inspector, data_idx: "foobar"
         )
