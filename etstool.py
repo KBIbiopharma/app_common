@@ -213,7 +213,6 @@ def install(runtime, toolkit, environment, editable):
 @click.option('--environment', default=None)
 def test(runtime, toolkit, environment):
     """ Run the test suite in a given environment with the specified toolkit.
-
     """
     parameters = get_parameters(runtime, toolkit, environment)
     environ = environment_vars.get(toolkit, {}).copy()
@@ -243,11 +242,13 @@ def test(runtime, toolkit, environment):
 
 
 @cli.command()
+@click.option('--runtime', default=DEFAULT_RUNTIME)
+@click.option('--toolkit', default=DEFAULT_TOOLKIT)
 @click.option('--environment', default=None)
-def flake8(environment):
+def flake8(runtime, toolkit, environment):
     """ Run flake8 on the source code.
     """
-    parameters = {"environment": environment}
+    parameters = get_parameters(runtime, toolkit, environment)
     commands = [
         "edm run -e {environment} flake8 setup.py " + PKG_NAME,
     ]
