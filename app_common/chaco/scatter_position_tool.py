@@ -78,7 +78,8 @@ def add_scatter_inspectors(plot, datasets=None, include_overlay=True,
 
     # Create and attach the inspector overlay
     if include_overlay:
-        overlay = DataframeScatterOverlay(plot, inspectors=inspectors,
+        overlay = DataframeScatterOverlay(component=plot,
+                                          inspectors=inspectors,
                                           **kwargs)
         plot.overlays.append(overlay)
     else:
@@ -121,12 +122,12 @@ class DataframeScatterOverlay(TextBoxOverlay):
     #: Formatting(s) for the DF values, optionally by columns. E.g. ".3f"
     val_fmts = Either(Dict, Str)
 
-    def __init__(self, **traits):
+    def __init__(self, *args, **traits):
         if "inspectors" in traits and \
                 isinstance(traits["inspectors"], ScatterInspector):
             traits["inspectors"] = [traits["inspectors"]]
 
-        super(DataframeScatterOverlay, self).__init__(**traits)
+        super(DataframeScatterOverlay, self).__init__(*args, **traits)
 
     # Traits listener methods -------------------------------------------------
 
