@@ -114,7 +114,7 @@ extra_dependencies = {
     # XXX once pyside2 is available in EDM, we will want it here
     'pyside2': set(),
     'pyqt5': {'pyqt5'},
-    'wx': set(),
+    'wx': set("wx"),
 }
 
 runtime_dependencies = {}
@@ -226,13 +226,9 @@ def test(runtime, toolkit, environment):
     else:
         environ["EXCLUDE_TESTS"] = "(wx|qt)"
 
-    parameters["integrationtests"] = os.path.abspath("integrationtests")
     commands = [
-        "edm run -e {environment} -- coverage run -p -m unittest discover -v " + PKG_NAME,
-        # coverage run prevents local images to be loaded for demo examples
-        # which are not defined in Python packages. Run with python directly
-        # instead.
-        "edm run -e {environment} -- python -m unittest discover -v {integrationtests}",
+        "edm run -e {environment} -- coverage run -p -m unittest discover -v "
+        + PKG_NAME,
     ]
 
     # We run in a tempdir to avoid accidentally picking up wrong traitsui
@@ -244,6 +240,21 @@ def test(runtime, toolkit, environment):
         os.environ.update(environ)
         execute(commands, parameters)
     click.echo('Done test')
+
+
+@cli.command()
+@click.option('--environment', default=None)
+def flake8(environment):
+    """ Run flake8 on the source code.
+    """
+    parameters = {"environment": environment}
+    commands = [
+        "edm run -e {environment} flake8 setup.py " + PKG_NAME,
+    ]
+
+    execute(commands, parameters)
+    click.echo('Done flake8')
+
 
 @cli.command()
 @click.option('--runtime', default=DEFAULT_RUNTIME)
@@ -275,6 +286,7 @@ def test_clean(runtime, toolkit):
         test(args=args, standalone_mode=False)
     finally:
         cleanup(args=args, standalone_mode=False)
+
 
 @cli.command()
 @click.option('--runtime', default=DEFAULT_RUNTIME)
@@ -393,7 +405,12 @@ def do_in_tempdir(files=(), capture_files=()):
         rmtree(path)
 
 
-def execute(commands, parameters):
+def execute(commands, parameters=None):
+    """ Execute command line commands.
+    """
+    if parameters is None:
+        parameters = {}
+
     for command in commands:
         click.echo("[EXECUTING] {}".format(command.format(**parameters)))
         try:
