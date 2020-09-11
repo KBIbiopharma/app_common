@@ -1,4 +1,5 @@
-"""
+""" Utilities to quickly and consistently add logging infrastruture for
+applications.
 """
 import time
 from logging import DEBUG, FileHandler, Formatter, getLogger, Handler, INFO, \
@@ -123,33 +124,25 @@ def http_logging_handler(url="", pkg_list=None, dt_fmt="", logging_level=INFO,
     logging_level : int, optional
         Level above which to send log call to HTTP handler. Defaults to INFO.
     """
-    if pkg_list is None:
-        pkg_list = ["app_common"]
-
     if not dt_fmt:
         dt_fmt = "%Y/%m/%d %H:%M:%S"
 
     http_handler = CustomHTTPHandler(url, dt_fmt=dt_fmt, **kwargs)
     http_handler.setLevel(logging_level)
 
-    # Only remote log the application's messages to avoid noise and
-    # RecursionError because requests sends logging messages:
-    for pkg in pkg_list:
-        logger = getLogger(pkg)
-        logger.addHandler(http_handler)
+    logger = getLogger()
+    logger.addHandler(http_handler)
 
-        try:
-            logger.log(logging_level+10, "Testing new remote handler...")
-            msg = "Remote handler seems to be working normally."
-            logger.debug(msg)
-        except Exception as e:
-            logger.handlers.remove(http_handler)
-            msg = "Failed to issue a log call, probably because of the " \
-                  "remote handler. Removed the remote handler. Error was '{}'."
-            msg = msg.format(e)
-            logger.error(msg)
-        finally:
-            break
+    try:
+        logger.log(logging_level+10, "Testing new remote handler...")
+        msg = "Remote handler seems to be working normally."
+        logger.debug(msg)
+    except Exception as e:
+        logger.handlers.remove(http_handler)
+        msg = "Failed to issue a log call, probably because of the " \
+              "remote handler. Removed the remote handler. Error was '{}'."
+        msg = msg.format(e)
+        logger.error(msg)
 
     return http_handler
 
