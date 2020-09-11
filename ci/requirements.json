@@ -9,6 +9,7 @@
   "pyqt5",
   "pyyaml",
   "qt",
+  "requests",
   "traits",
   "traitsui",
   "scimath",
