@@ -6,14 +6,14 @@ from uuid import uuid4
 from app_common.std_lib.os_utils import collect_user_name
 
 
-class CustomHTTPHandler(Handler):
+class RequestsHTTPHandler(Handler):
     """ Custom HTTPHandler passing the HTTP request using the requests.post
     method, since it tends to be more stable for REST API end points.
     """
     def __init__(self, url, app_name="", start_dt="", dt_fmt="", **adtl_data):
         """ Initialize the instance with the request URL and all parameters.
         """
-        super(CustomHTTPHandler, self).__init__()
+        super(RequestsHTTPHandler, self).__init__()
         self.url = url
         self.app_name = app_name
         self.adtl_data = adtl_data

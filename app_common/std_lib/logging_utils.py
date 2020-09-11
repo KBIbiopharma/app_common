@@ -2,11 +2,12 @@
 applications.
 """
 import time
-from logging import DEBUG, FileHandler, Formatter, getLogger, Handler, INFO, \
+from logging import DEBUG, FileHandler, Formatter, getLogger, INFO, \
     StreamHandler, WARNING
 import os
 from os.path import isdir, join
 
+from .remote_logging_handler import RequestsHTTPHandler
 
 
 def initialize_logging(logging_level=WARNING, log_file=None, log_dir=".",
@@ -91,8 +92,8 @@ def initialize_logging(logging_level=WARNING, log_file=None, log_dir=".",
     return log_file
 
 
-def http_logging_handler(url="", pkg_list=None, dt_fmt="", logging_level=INFO,
-                         handler_klass=CustomHTTPHandler, **kwargs):
+def http_logging_handler(url="", dt_fmt="", logging_level=INFO,
+                         handler_klass=RequestsHTTPHandler, **kwargs):
     """ Create and add HTTP handler to send logging calls to remote API.
 
     Parameters
@@ -123,7 +124,7 @@ def http_logging_handler(url="", pkg_list=None, dt_fmt="", logging_level=INFO,
     if not dt_fmt:
         dt_fmt = "%Y/%m/%d %H:%M:%S"
 
-    http_handler = CustomHTTPHandler(url, dt_fmt=dt_fmt, **kwargs)
+    http_handler = handler_klass(url, dt_fmt=dt_fmt, **kwargs)
     http_handler.setLevel(logging_level)
 
     logger = getLogger()
