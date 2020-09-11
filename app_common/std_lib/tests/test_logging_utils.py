@@ -3,8 +3,12 @@ import logging
 import os
 from nose.plugins.logcapture import MyMemoryHandler
 
-from app_common.std_lib.logging_utils import CustomHTTPHandler, \
+from app_common.std_lib.logging_utils import RequestsHTTPHandler, \
     initialize_logging
+
+
+class FooHandler(RequestsHTTPHandler):
+    pass
 
 
 class TestLoggingInitialization(TestCase):
@@ -85,17 +89,34 @@ class TestLoggingInitialization(TestCase):
         initialize_logging(include_http=True, http_logger_kw=http_logger_kw)
 
         # root_logger has the stream handler:
-        root_logger = self.root_logger
-        self.assertEqual(len(root_logger.handlers), 1)
-        self.assertIsInstance(root_logger.handlers[0],
+        logger = self.root_logger
+        self.assertEqual(len(logger.handlers), 2)
+        self.assertIsInstance(logger.handlers[0],
                               logging.StreamHandler)
-        self.assertEqual(root_logger.handlers[0].level, logging.WARNING)
+        self.assertIsInstance(logger.handlers[1], RequestsHTTPHandler)
+        self.assertEqual(logger.handlers[1].level, logging.INFO)
 
-        # app_common handler is the custom http one:
-        logger = logging.getLogger("app_common")
-        self.assertEqual(len(logger.handlers), 1)
-        self.assertIsInstance(logger.handlers[0], CustomHTTPHandler)
-        self.assertEqual(logger.handlers[0].level, logging.INFO)
+    def test_httplogging_custom_handler_klass(self):
+        self.assert_initial_state()
+        http_logger_kw = {"url": "https://postman-echo.com/post",
+                          "handler_klass": FooHandler}
+        initialize_logging(include_http=True, http_logger_kw=http_logger_kw)
+
+        logger = self.root_logger
+        self.assertEqual(len(logger.handlers), 2)
+        self.assertIsInstance(logger.handlers[1], FooHandler)
+        self.assertEqual(logger.handlers[1].level, logging.INFO)
+
+    def test_httplogging_custom_level(self):
+        self.assert_initial_state()
+        http_logger_kw = {"url": "https://postman-echo.com/post",
+                          "logging_level": logging.ERROR}
+        initialize_logging(include_http=True, http_logger_kw=http_logger_kw)
+
+        logger = self.root_logger
+        self.assertEqual(len(logger.handlers), 2)
+        self.assertIsInstance(logger.handlers[1], RequestsHTTPHandler)
+        self.assertEqual(logger.handlers[1].level, logging.ERROR)
 
     def test_initialize_with_httplogging_fail_no_url(self):
         root_logger = self.root_logger
