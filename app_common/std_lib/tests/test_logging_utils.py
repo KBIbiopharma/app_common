@@ -3,7 +3,8 @@ import logging
 import os
 from nose.plugins.logcapture import MyMemoryHandler
 
-from app_common.std_lib.logging_utils import initialize_logging
+from app_common.std_lib.logging_utils import CustomHTTPHandler, \
+    initialize_logging
 
 
 class TestLoggingInitialization(TestCase):
@@ -77,3 +78,30 @@ class TestLoggingInitialization(TestCase):
             self.assertEqual(root_logger.handlers[1].level, logging.DEBUG)
         finally:
             os.remove(filename)
+
+    def test_initialize_with_httplogging(self):
+        self.assert_initial_state()
+        http_logger_kw = {"url": "https://postman-echo.com/post"}
+        initialize_logging(include_http=True, http_logger_kw=http_logger_kw)
+
+        # root_logger has the stream handler:
+        root_logger = self.root_logger
+        self.assertEqual(len(root_logger.handlers), 1)
+        self.assertIsInstance(root_logger.handlers[0],
+                              logging.StreamHandler)
+        self.assertEqual(root_logger.handlers[0].level, logging.WARNING)
+
+        # app_common handler is the custom http one:
+        logger = logging.getLogger("app_common")
+        self.assertEqual(len(logger.handlers), 1)
+        self.assertIsInstance(logger.handlers[0], CustomHTTPHandler)
+        self.assertEqual(logger.handlers[0].level, logging.INFO)
+
+    def test_initialize_with_httplogging_fail_no_url(self):
+        root_logger = self.root_logger
+        self.assert_initial_state()
+        initialize_logging(include_http=True)
+        self.assertEqual(len(root_logger.handlers), 1)
+        self.assertIsInstance(root_logger.handlers[0],
+                              logging.StreamHandler)
+        self.assertEqual(root_logger.handlers[0].level, logging.WARNING)
