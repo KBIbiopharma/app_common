@@ -10,7 +10,8 @@ class RequestsHTTPHandler(Handler):
     """ Custom HTTPHandler passing the HTTP request using the requests.post
     method, since it tends to be more stable for REST API end points.
     """
-    def __init__(self, url, app_name="", start_dt="", dt_fmt="", **adtl_data):
+    def __init__(self, url, app_name="", start_dt="", dt_fmt="", debug=False,
+                 **adtl_data):
         """ Initialize the instance with the request URL and all parameters.
         """
         super(RequestsHTTPHandler, self).__init__()
@@ -19,6 +20,7 @@ class RequestsHTTPHandler(Handler):
         self.adtl_data = adtl_data
         self.start_dt = start_dt
         self.dt_fmt = dt_fmt
+        self.debug = debug
 
     def emit(self, record):
         """ Custom implementation of emit using requests.post since it tends to
@@ -26,8 +28,10 @@ class RequestsHTTPHandler(Handler):
         """
         data = self.map_log_record(record)
         # Build a valid json string with the data to record:
-        data_str = str(data).replace("'", '"')
-        response = requests.post(self.url, data=data_str)
+        payload = self.build_payload(data)
+        response = requests.post(self.url, data=payload)
+        if self.debug:
+            print(response.content)
         return response
 
     def map_log_record(self, record):
@@ -49,8 +53,16 @@ class RequestsHTTPHandler(Handler):
             'line_no': record.lineno,
             'func_name': record.funcName,
             'utc_timestamp': utc_datetime,
-            'msg': record.msg
+            'msg': self.clean_msg(record.msg)
         }
         data.update(self.adtl_data)
-
         return data
+
+    def build_payload(self, data):
+        """ Convert dict of data to valid json string to send through HTTP. """
+        payload = str(data).replace("'", '"')
+        return payload
+
+    def clean_msg(self, msg):
+        """ Clean logging message to make it HTTP compatible. """
+        return msg.replace("'", " ")

@@ -71,7 +71,8 @@ def action_monitoring(action_name, log_folder="", logger=None,
     if logger is None:
         logger = local_logger
 
-    logger.log(logging_level, "Action '{}' requested...".format(action_name))
+    msg = 'Action requested: {}'.format(action_name)
+    logger.log(logging_level, msg)
     try:
         yield
     except Exception as e:
