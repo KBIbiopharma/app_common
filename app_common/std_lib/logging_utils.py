@@ -140,6 +140,8 @@ def http_logging_handler(url="", pkg_list=None, dt_fmt="", logging_level=INFO,
 
         try:
             logger.log(logging_level+10, "Testing new remote handler...")
+            msg = "Remote handler seems to be working normally."
+            logger.debug(msg)
         except Exception as e:
             logger.handlers.remove(http_handler)
             msg = "Failed to issue a log call, probably because of the " \
