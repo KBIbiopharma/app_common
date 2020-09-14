@@ -10,15 +10,22 @@ class RequestsHTTPHandler(Handler):
     """ Custom HTTPHandler passing the HTTP request using the requests.post
     method, since it tends to be more stable for REST API end points.
     """
-    def __init__(self, url, app_name="", start_dt="", dt_fmt="", debug=False,
-                 **adtl_data):
+    def __init__(self, url, app_name="", session_start="", username="",
+                 dt_fmt="", debug=False, **adtl_data):
         """ Initialize the instance with the request URL and all parameters.
         """
         super(RequestsHTTPHandler, self).__init__()
+
+        if not dt_fmt:
+            dt_fmt = "%Y/%m/%d %H:%M:%S"
+
         self.url = url
         self.app_name = app_name
         self.adtl_data = adtl_data
-        self.start_dt = start_dt
+        # This log_id should be unique and constant throughout a tool
+        # usage:
+        self.session_id = app_name + ":" + username + ":" + session_start
+        self.username = username
         self.dt_fmt = dt_fmt
         self.debug = debug
 
@@ -39,15 +46,11 @@ class RequestsHTTPHandler(Handler):
         """
         # Generate utc datetime since default logging collects local time:
         utc_datetime = datetime.strftime(datetime.utcnow(), self.dt_fmt)
-        username = collect_user_name()
-        # This log_id should be unique and constant throughout a tool
-        # usage:
-        session_id = self.app_name + ":" + username + ":" + self.start_dt
         data = {
             "log_id": str(uuid4()),
-            "session_id": session_id,
+            "session_id": self.session_id,
             "app_name": self.app_name,
-            'user': username,
+            'user': self.username,
             "pkg": record.name,
             'level_no': record.levelno,
             'line_no': record.lineno,
@@ -60,8 +63,7 @@ class RequestsHTTPHandler(Handler):
 
     def build_payload(self, data):
         """ Convert dict of data to valid json string to send through HTTP. """
-        payload = str(data).replace("'", '"')
-        return payload
+        return str(data).replace("'", '"')
 
     def clean_msg(self, msg):
         """ Clean logging message to make it HTTP compatible. """

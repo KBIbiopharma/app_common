@@ -2,17 +2,17 @@
 applications.
 """
 import time
-from logging import DEBUG, FileHandler, Formatter, getLogger, INFO, \
-    StreamHandler, WARNING
+from logging import DEBUG, FileHandler, Formatter, getLogger, StreamHandler, \
+    WARNING
 import os
 from os.path import isdir, join
 
-from .remote_logging_handler import RequestsHTTPHandler
+from app_common.std_lib.remote_logging_handler import RequestsHTTPHandler
 
 
 def initialize_logging(logging_level=WARNING, log_file=None, log_dir=".",
-                       prefix=None, include_console=True, include_http=False,
-                       http_logger_kw=None):
+                       prefix=None, include_console=True, dt_fmt="",
+                       include_http=False, http_logger_kw=None):
     """ Set up logging with a console handler and optionally a file handler.
 
     Parameters
@@ -40,21 +40,24 @@ def initialize_logging(logging_level=WARNING, log_file=None, log_dir=".",
         Whether to include an HTTP logging handler.
 
     http_logger_kw : dict
-        http logging keyword arguments, passed to
+        http logging keyword arguments, passed to `http_logging_handler` as
+        kwargs.
 
     Returns
     -------
     str
         Path to the log file written to, if any.
     """
+    if not dt_fmt:
+        dt_fmt = '%Y-%m-%d %H:%M:%S'
+
     # Initial clean up if needed (useful for multiple runs in ipython)
     root_logger = getLogger()
     if root_logger.handlers:
         root_logger.handlers = []
 
     fmt = '%(asctime)s %(levelname)-8.8s [%(name)s:%(lineno)s] %(message)s'
-    datefmt = '%Y-%m-%d %H:%M:%S'
-    formatter = Formatter(fmt, datefmt)
+    formatter = Formatter(fmt, dt_fmt)
 
     root_logger.setLevel(DEBUG)
 
@@ -79,12 +82,13 @@ def initialize_logging(logging_level=WARNING, log_file=None, log_dir=".",
         log_fh.setLevel(DEBUG)
         log_fh.setFormatter(formatter)
         root_logger.addHandler(log_fh)
-        print("Logging setup. For details on current run, refer to this log "
+        print("Logging set up. For details on current run, refer to this log "
               "file : {!r}".format(log_file))
 
     if include_http:
         try:
-            http_logging_handler(start_dt=start_dt, **http_logger_kw)
+            http_logging_handler(session_start=start_dt, dt_fmt=dt_fmt,
+                                 **http_logger_kw)
         except Exception as e:
             msg = "Failed to create the remote handler. Error was {}".format(e)
             root_logger.error(msg)
@@ -92,7 +96,7 @@ def initialize_logging(logging_level=WARNING, log_file=None, log_dir=".",
     return log_file
 
 
-def http_logging_handler(url="", dt_fmt="", logging_level=INFO,
+def http_logging_handler(url="", logging_level=WARNING,
                          handler_klass=RequestsHTTPHandler, **kwargs):
     """ Create and add HTTP handler to send logging calls to remote API.
 
@@ -104,27 +108,20 @@ def http_logging_handler(url="", dt_fmt="", logging_level=INFO,
         request to.
 
     kwargs : dict
-        Attributes to the CustomHTTPHandler. In particular, it needs to specify
-        an app_name, start_dt to be combined and used as an identifier of a
-        single session. Should also include any additional data that the API
-        end point needs or that should be stored.
+        Attributes to create the handler. In particular, if using the
+        RequestsHTTPHandler, it can to specify an app_name, a username and a
+        session_start string to be combined and used as part of the identifier
+        of a single application run. It should also include any additional data
+        that the API end point needs or that should be stored.
 
-    pkg_list : list
-        List of package names to use this handler on. NOTE: this handler cannot
-        be used on the root handler, because that creates a RecursionError due
-        to the way requests.post is implemented.
-
-    dt_fmt : str, optional
-        Custom formatting for the UTC datetime to be passed to the logging
-        call.
+    handler_klass : type, optional
+        Handler class to create and add to the root logger. By default, a
+        `RequestsHTTPHandler` is created.
 
     logging_level : int, optional
         Level above which to send log call to HTTP handler. Defaults to INFO.
     """
-    if not dt_fmt:
-        dt_fmt = "%Y/%m/%d %H:%M:%S"
-
-    http_handler = handler_klass(url, dt_fmt=dt_fmt, **kwargs)
+    http_handler = handler_klass(url, **kwargs)
     http_handler.setLevel(logging_level)
 
     logger = getLogger()
@@ -136,9 +133,8 @@ def http_logging_handler(url="", dt_fmt="", logging_level=INFO,
         logger.debug(msg)
     except Exception as e:
         logger.handlers.remove(http_handler)
-        msg = "Failed to issue a log call, probably because of the " \
-              "remote handler. Removed the remote handler. Error was '{}'."
-        msg = msg.format(e)
+        msg = f"Failed to issue a log call, probably because of the remote " \
+            f"handler. Removed the remote handler. Error was '{e}'."
         logger.error(msg)
 
     return http_handler

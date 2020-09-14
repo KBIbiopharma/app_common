@@ -71,7 +71,7 @@ def action_monitoring(action_name, log_folder="", logger=None,
     if logger is None:
         logger = local_logger
 
-    msg = 'Action requested: {}'.format(action_name)
+    msg = f'Action requested: {action_name}'
     logger.log(logging_level, msg)
     try:
         yield
@@ -92,5 +92,5 @@ def action_monitoring(action_name, log_folder="", logger=None,
 
             message_dialog(None, msg, title=gui_title, severity=gui_severity)
     else:
-        msg = "Action '{}' performed successfully.".format(action_name)
+        msg = f"Action performed successfully: {action_name}"
         logger.debug(msg)
