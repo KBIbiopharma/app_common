@@ -81,6 +81,10 @@ class TestLoggingInitialization(TestCase):
             self.assertIsInstance(root_logger.handlers[1], logging.FileHandler)
             self.assertEqual(root_logger.handlers[1].level, logging.DEBUG)
         finally:
+            # Clean up:
+            file_handler = root_logger.handlers[1]
+            file_handler.flush()
+            file_handler.close()
             os.remove(filename)
 
     def test_initialize_with_httplogging(self):
@@ -94,7 +98,7 @@ class TestLoggingInitialization(TestCase):
         self.assertIsInstance(logger.handlers[0],
                               logging.StreamHandler)
         self.assertIsInstance(logger.handlers[1], RequestsHTTPHandler)
-        self.assertEqual(logger.handlers[1].level, logging.INFO)
+        self.assertEqual(logger.handlers[1].level, logging.WARNING)
 
     def test_httplogging_custom_handler_klass(self):
         self.assert_initial_state()
@@ -105,7 +109,7 @@ class TestLoggingInitialization(TestCase):
         logger = self.root_logger
         self.assertEqual(len(logger.handlers), 2)
         self.assertIsInstance(logger.handlers[1], FooHandler)
-        self.assertEqual(logger.handlers[1].level, logging.INFO)
+        self.assertEqual(logger.handlers[1].level, logging.WARNING)
 
     def test_httplogging_custom_level(self):
         self.assert_initial_state()
