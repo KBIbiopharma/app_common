@@ -27,7 +27,8 @@ def get_log_file(log_folder=""):
 
 
 @contextmanager
-def action_monitoring(action_name, log_folder="", logger=None, allow_gui=True,
+def action_monitoring(action_name, log_folder="", logger=None,
+                      logging_level=logging.INFO, allow_gui=True,
                       gui_title='Error', gui_severity='error',
                       feedback_menu_name="Help > Submit feedback/Report bug"):
     """ Context manager to provide monitoring & error handling for some action.
@@ -50,6 +51,9 @@ def action_monitoring(action_name, log_folder="", logger=None, allow_gui=True,
         Instance of the logger to use for monitoring. If not provided, will use
         the local logger.
 
+    logging_level : int
+        Level at which to report requested actions in logging.
+
     allow_gui : bool
         Whether to allow for a message dialog to be displayed to the user in
         case of an Exception.
@@ -67,7 +71,8 @@ def action_monitoring(action_name, log_folder="", logger=None, allow_gui=True,
     if logger is None:
         logger = local_logger
 
-    logger.debug("Action '{}' requested...".format(action_name))
+    msg = f'Action requested: {action_name}'
+    logger.log(logging_level, msg)
     try:
         yield
     except Exception as e:
@@ -87,16 +92,5 @@ def action_monitoring(action_name, log_folder="", logger=None, allow_gui=True,
 
             message_dialog(None, msg, title=gui_title, severity=gui_severity)
     else:
-        msg = "Action '{}' performed successfully.".format(action_name)
+        msg = f"Action performed successfully: {action_name}"
         logger.debug(msg)
-
-
-def add_stream_handler_to_root_logger():
-    """ Add a development handler to root logger for quick setup.
-    """
-    root_logger = logging.getLogger()
-    handler = logging.StreamHandler()
-    handler.setLevel(logging.DEBUG)
-    root_logger.addHandler(handler)
-    root_logger.setLevel(logging.DEBUG)
-    return root_logger
