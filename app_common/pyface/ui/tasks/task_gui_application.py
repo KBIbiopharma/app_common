@@ -1,11 +1,8 @@
-# Copyright (c) 2013-2015 by Enthought, Inc., Austin, TX
-# All rights reserved.
-#
-# This software is provided without warranty under the terms of the BSD
-# license included in enthought/LICENSE.txt and may be redistributed only
-# under the conditions described in the aforementioned license.  The license
-# is also available online at http://www.enthought.com/licenses/BSD.txt
-# Thanks for using Enthought open source!
+""" Base application object built on Enthought's pyface's Task framework.
+
+It is similar and a bit redundant with another implementation added to pyface
+and the 2 should be compared and merged.
+"""
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
@@ -126,10 +123,11 @@ class TaskGuiApplication(HasStrictTraits):
         self._setup_logging()
         logger.info('---- Application starting ----')
 
-        # Create the GUI and sleep so that the splash screen comes up for 3
-        # seconds first thing
+        # Create the GUI and sleep so that the splash screen comes up for
+        # splash_screen_duration seconds first thing
         self.gui
-        time.sleep(self.splash_screen_duration)
+        if self.splash_screen_duration > 0:
+            time.sleep(self.splash_screen_duration)
         return True
 
     def stop(self):
@@ -306,12 +304,13 @@ class TaskGuiApplication(HasStrictTraits):
 
     def _gui_default(self):
         from pyface.api import GUI
-
-        return GUI(splash_screen=self.splash_screen)
+        if self.splash_screen and self.splash_screen_duration > 0:
+            return GUI(splash_screen=self.splash_screen)
+        else:
+            return GUI()
 
     def _undo_manager_default(self):
         from apptools.undo.api import UndoManager
-
         return UndoManager()
 
     def _about_dialog_default(self):
