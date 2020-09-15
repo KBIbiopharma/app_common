@@ -10,7 +10,7 @@ from os.path import isdir, join
 from app_common.std_lib.remote_logging_handler import RequestsHTTPHandler
 
 # More than info, less than warning, level to record what actions are used in
-# applications
+# applications: menu entries, navigation buttons, ...
 ACTION_LEVEL = 25
 
 

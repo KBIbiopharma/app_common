@@ -1,7 +1,8 @@
 import logging
 from contextlib import contextmanager
 
-from ..std_lib.sys_utils import format_tb
+from app_common.std_lib.logging_utils import ACTION_LEVEL
+from app_common.std_lib.sys_utils import format_tb
 
 local_logger = logging.getLogger(__name__)
 
@@ -28,7 +29,7 @@ def get_log_file(log_folder=""):
 
 @contextmanager
 def action_monitoring(action_name, log_folder="", logger=None,
-                      logging_level=logging.INFO, allow_gui=True,
+                      logging_level=ACTION_LEVEL, allow_gui=True,
                       gui_title='Error', gui_severity='error',
                       feedback_menu_name="Help > Submit feedback/Report bug"):
     """ Context manager to provide monitoring & error handling for some action.
