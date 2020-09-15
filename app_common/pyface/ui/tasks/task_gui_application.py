@@ -129,7 +129,7 @@ class TaskGuiApplication(HasStrictTraits):
         # Create the GUI and sleep so that the splash screen comes up for
         # splash_screen_duration seconds first thing
         self.gui
-        if self.splash_screen_duration:
+        if self.splash_screen_duration > 0:
             time.sleep(self.splash_screen_duration)
         return True
 
@@ -307,7 +307,7 @@ class TaskGuiApplication(HasStrictTraits):
 
     def _gui_default(self):
         from pyface.api import GUI
-        if self.splash_screen and self.splash_screen_duration > 0.:
+        if self.splash_screen and self.splash_screen_duration > 0:
             return GUI(splash_screen=self.splash_screen)
         else:
             return GUI()
