@@ -1,4 +1,4 @@
-""" Base application object built on Enthought's pyface's Task.
+""" Base application object built on Enthought's pyface's Task framework.
 
 It is similar and a bit redundant with another implementation added to pyface
 and the 2 should be compared and merged.
