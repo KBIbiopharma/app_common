@@ -71,7 +71,7 @@ def initialize_logging(logging_level=WARNING, log_file=None, log_dir=".",
         sh.setFormatter(formatter)
         root_logger.addHandler(sh)
 
-    # If no file provided, create one from prefix, log_dir and datetime:
+    # If no file provided, create one from prefix, log_dir and current time:
     start_dt = time.strftime("%Y-%m-%d-%H-%M-%S")
     if log_file is None and prefix is not None:
         log_file = prefix + "_{}.log".format(start_dt)
@@ -123,7 +123,7 @@ def http_logging_handler(url="", logging_level=WARNING,
         `RequestsHTTPHandler` is created.
 
     logging_level : int, optional
-        Level above which to send log call to HTTP handler. Defaults to INFO.
+        Level above which to send log call to HTTP handler.
     """
     http_handler = handler_klass(url, **kwargs)
     http_handler.setLevel(logging_level)
@@ -133,13 +133,14 @@ def http_logging_handler(url="", logging_level=WARNING,
 
     try:
         logger.log(logging_level+10, "Testing new remote handler...")
-        msg = "Remote handler seems to be working normally."
-        logger.debug(msg)
     except Exception as e:
         logger.handlers.remove(http_handler)
         msg = f"Failed to issue a log call, probably because of the remote " \
             f"handler. Removed the remote handler. Error was '{e}'."
         logger.error(msg)
+    else:
+        msg = "Remote handler seems to be working normally."
+        logger.debug(msg)
 
     return http_handler
 
