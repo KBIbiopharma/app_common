@@ -17,6 +17,8 @@ from traits.api import (Bool, Event, Float, HasStrictTraits, Instance, List,
                         Property, Str, Tuple, Vetoable)
 from traits.etsconfig.etsconfig import ETSConfig
 
+from app_common.std_lib.logging_utils import ACTION_LEVEL
+
 logger = logging.getLogger(__name__)
 
 
@@ -121,7 +123,7 @@ class TaskGuiApplication(HasStrictTraits):
         """
         self._initialize_application_home()
         self._setup_logging()
-        logger.info('---- Application starting ----')
+        logger.log(ACTION_LEVEL, '---- Application starting ----')
 
         # Create the GUI and sleep so that the splash screen comes up for
         # splash_screen_duration seconds first thing
@@ -131,8 +133,9 @@ class TaskGuiApplication(HasStrictTraits):
         return True
 
     def stop(self):
-        """ Stop the application, cleanly releasing resources, if possible. """
-        logger.info('---- Application stopping ----')
+        """ Stop the application, cleanly releasing resources, if possible.
+        """
+        logger.log(ACTION_LEVEL, '---- Application stopping ----')
         self._prepare_exit()
         return True
 
