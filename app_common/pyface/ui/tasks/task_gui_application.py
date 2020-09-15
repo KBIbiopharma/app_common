@@ -1,11 +1,8 @@
-# Copyright (c) 2013-2015 by Enthought, Inc., Austin, TX
-# All rights reserved.
-#
-# This software is provided without warranty under the terms of the BSD
-# license included in enthought/LICENSE.txt and may be redistributed only
-# under the conditions described in the aforementioned license.  The license
-# is also available online at http://www.enthought.com/licenses/BSD.txt
-# Thanks for using Enthought open source!
+""" Base application object built on Enthought's pyface's Task.
+
+It is similar and a bit redundant with another implementation added to pyface
+and the 2 should be compared and merged.
+"""
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
