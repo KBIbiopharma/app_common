@@ -9,6 +9,10 @@ from os.path import isdir, join
 
 from app_common.std_lib.remote_logging_handler import RequestsHTTPHandler
 
+# More than info, less than warning, level to record what actions are used in
+# applications
+ACTION_LEVEL = 25
+
 
 def initialize_logging(logging_level=WARNING, log_file=None, log_dir=".",
                        prefix=None, include_console=True, dt_fmt="",
