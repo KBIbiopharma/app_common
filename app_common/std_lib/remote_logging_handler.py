@@ -3,8 +3,6 @@ from datetime import datetime
 import requests
 from uuid import uuid4
 
-from app_common.std_lib.os_utils import collect_user_name
-
 
 class RequestsHTTPHandler(Handler):
     """ Custom HTTPHandler passing the HTTP request using the requests.post
