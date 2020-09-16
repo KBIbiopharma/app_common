@@ -1,5 +1,9 @@
 # app_common
-[![Build Status](https://travis-ci.org/KBIbiopharma/app_common.svg?branch=master)](https://travis-ci.org/KBIbiopharma/app_common)
+
+| Linux, OSX  | [![Build Status](https://travis-ci.org/KBIbiopharma/app_common.svg?branch=master)](https://travis-ci.org/KBIbiopharma/app_common) |
+| ----------- | ----------- |
+| Win         | [![Build status](https://ci.appveyor.com/api/projects/status/7fficyruc7myu0mp/branch/master?svg=true)](https://ci.appveyor.com/project/jonathanrocher/app-common/branch/master)       |
+
 
 ## Description
 
