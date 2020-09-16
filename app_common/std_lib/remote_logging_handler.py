@@ -36,7 +36,9 @@ class RequestsHTTPHandler(Handler):
         payload = self.build_payload(data)
         response = requests.post(self.url, data=payload)
         if self.debug:
-            print(response.content)
+            # Eval to clean up the print output
+            response = eval(response.content)
+            print(response)
         return response
 
     def map_log_record(self, record):
@@ -49,10 +51,8 @@ class RequestsHTTPHandler(Handler):
             "session_id": self.session_id,
             "app_name": self.app_name,
             'user': self.username,
-            "pkg": record.name,
+            "code_loc": f"{record.name}:{record.lineno} ({record.funcName})",
             'level_no': record.levelno,
-            'line_no': record.lineno,
-            'func_name': record.funcName,
             'utc_timestamp': utc_datetime,
             'msg': self.clean_msg(record.msg)
         }

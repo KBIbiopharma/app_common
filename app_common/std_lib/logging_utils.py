@@ -128,16 +128,17 @@ def http_logging_handler(url="", logging_level=WARNING,
     http_handler = handler_klass(url, **kwargs)
     http_handler.setLevel(logging_level)
 
-    logger = getLogger()
-    logger.addHandler(http_handler)
+    root_logger = getLogger()
+    root_logger.addHandler(http_handler)
 
     try:
+        logger = getLogger(__name__)
         logger.log(logging_level+10, "Testing new remote handler...")
     except Exception as e:
-        logger.handlers.remove(http_handler)
+        root_logger.handlers.remove(http_handler)
         msg = f"Failed to issue a log call, probably because of the remote " \
             f"handler. Removed the remote handler. Error was '{e}'."
-        logger.error(msg)
+        root_logger.error(msg)
     else:
         msg = "Remote handler seems to be working normally."
         logger.debug(msg)
