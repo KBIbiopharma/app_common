@@ -106,7 +106,10 @@ PIP_DEPENDENCIES = "ci/pip_requirements.json"
 dependencies = set(json.load(open(DEPENDENCIES)) +
                    json.load(open(DEV_DEPENDENCIES)))
 
-pip_dependencies = json.load(open(PIP_DEPENDENCIES))
+if os.path.isfile(PIP_DEPENDENCIES):
+    pip_dependencies = json.load(open(PIP_DEPENDENCIES))
+else:
+    pip_dependencies = []
 
 # Additional toolkit-independent dependencies for demo testing
 test_dependencies = set()
