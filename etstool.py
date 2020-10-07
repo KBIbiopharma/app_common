@@ -111,9 +111,10 @@ if os.path.isfile(PIP_DEPENDENCIES):
 else:
     pip_dependencies = []
 
-# Additional toolkit-independent dependencies for demo testing
+# Additional toolkit-independent dependencies
 test_dependencies = set()
 
+# Additional toolkit-dependent dependencies
 extra_dependencies = {
     # XXX once pyside2 is available in EDM, we will want it here
     'pyside2': set(),
