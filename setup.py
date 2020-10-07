@@ -30,7 +30,11 @@ setup(
     install_requires=[],
     requires=[],
     # Additional data files
-    data_files=[(".", ["README.md", "LICENSE"])],
+    data_files=[
+        (".", ["README.md", "LICENSE"]),
+        ("app_common/apptools/script_runner/tests/data",
+         ["app_common/apptools/script_runner/tests/data/first_script.py"])
+    ],
     entry_points={
         'console_scripts': [],
       },
