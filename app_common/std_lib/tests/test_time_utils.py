@@ -29,7 +29,7 @@ class TestTimedCall(TestCase):
         sleeping_func()
 
     def test_print_info(self):
-        with capture_stdout() as str_io:
+        with capture_stdout(steam_close=False) as str_io:
             @timed_call(report="print")
             def sleeping_func():
                 time.sleep(.2)
