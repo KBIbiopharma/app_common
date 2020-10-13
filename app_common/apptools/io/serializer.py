@@ -428,6 +428,12 @@ def serialize(obj, array_collection=None, software_name="", software_uuid="",
     additional_serializers : dict, optional
         Dictionary mapping class names to the serializer class to use to
         serialize an object.
+
+    Returns
+    -------
+    tuple
+        2-tuple containing the serialized data dictionary and the array
+        collection dict.
     """
     if klass is None:
         klass = Serializer
