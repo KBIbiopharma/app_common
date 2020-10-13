@@ -28,11 +28,12 @@ def string2filename(string, special_chars=SPECIAL_CHARACTERS, adl_chars="",
         String to transform into a valid filename.
 
     special_chars : str [OPTIONAL, default=" \\/:()[]{}%^$*#@!+=-\"'"]
-        All characters to be replaced by a
+        All characters to be replaced by a character, the underscore by
+        default.
 
     adl_chars : str [OPTIONAL]
-        Characters to be added to the special_chars, to be replaced by an
-        underscore.
+        Characters to be added to the special_chars, to be replaced by a
+        character, an underscore by default.
 
     replace_with : str [OPTIONAL, default="_"]
         Character to replace all special characters by.
