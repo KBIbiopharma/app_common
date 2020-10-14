@@ -52,7 +52,8 @@ def is_has_traits_almost_equal(obj1, obj2, attr_name="", eps=1e-9, ignore=(),
         Whether to check the dtypes of the numpy array attributes.
 
     debug : bool
-        Whether to print attribute paths
+        Whether to print attribute paths during usage. Useful if the function
+        raises an exception, to track what attribute led to that exception.
     """
     if not isinstance(obj1, HasTraits):
         msg = "First arg ({}) not a HasTraits class: {}"
