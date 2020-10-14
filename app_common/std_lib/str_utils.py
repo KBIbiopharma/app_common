@@ -40,6 +40,9 @@ def add_suffix_if_exists(candidate, existing_names, suffix_patt="_v{}"):
 def sanitize_string(string, special_chars=None, replace_with="_"):
     """ Replace special characters in a string by a character ('_' by default).
 
+    This can be used to generate a valid filename, or a valid variable name
+    from a general string.
+
     Parameters
     ----------
     string : str
