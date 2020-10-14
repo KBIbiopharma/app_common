@@ -1,7 +1,6 @@
 from unittest import TestCase
 import logging
 import os
-from nose.plugins.logcapture import MyMemoryHandler
 
 from app_common.std_lib.logging_utils import RequestsHTTPHandler, \
     initialize_logging
@@ -23,10 +22,16 @@ class TestLoggingInitialization(TestCase):
 
     def assert_initial_state(self):
         root_logger = self.root_logger
-        # By default, if tests run with nose, there is a nose handler:
+        # If tests run with pytest, there are 4 pytest handlers by default:
         if root_logger.handlers:
-            self.assertEqual(len(root_logger.handlers), 1)
-            self.assertIsInstance(root_logger.handlers[0], MyMemoryHandler)
+            from _pytest.logging import _LiveLoggingNullHandler, \
+                LogCaptureHandler, _FileHandler
+
+            self.assertEqual(len(root_logger.handlers), 4)
+            for handler in root_logger.handlers:
+                pytest_handlers = (_LiveLoggingNullHandler, LogCaptureHandler,
+                                   _FileHandler)
+                self.assertIsInstance(handler, pytest_handlers)
         else:
             self.assertEqual(len(root_logger.handlers), 0)
 

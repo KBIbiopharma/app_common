@@ -1,6 +1,6 @@
 [run]
 branch = True
-source = traitsui
+source = app_common
 omit = */tests/*
 
 [report]
