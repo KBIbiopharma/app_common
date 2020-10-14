@@ -24,7 +24,8 @@ IGNORE_TYPES = (BuiltinFunctionType, BuiltinMethodType, FunctionType,
 
 
 def is_has_traits_almost_equal(obj1, obj2, attr_name="", eps=1e-9, ignore=(),
-                               check_type=True, check_dtype=False):
+                               check_type=True, check_dtype=False,
+                               debug=False):
     """ Test if 2 traits objects are almost equal up to a certain precision.
 
     Parameters
@@ -46,6 +47,12 @@ def is_has_traits_almost_equal(obj1, obj2, attr_name="", eps=1e-9, ignore=(),
 
     check_type : bool
         Check whether the 2 objects have the same type? True by default.
+
+    check_dtype : bool
+        Whether to check the dtypes of the numpy array attributes.
+
+    debug : bool
+        Whether to print attribute paths
     """
     if not isinstance(obj1, HasTraits):
         msg = "First arg ({}) not a HasTraits class: {}"
@@ -65,7 +72,8 @@ def is_has_traits_almost_equal(obj1, obj2, attr_name="", eps=1e-9, ignore=(),
 
     obj1_traits = set(obj1.trait_names())
     obj2_traits = set(obj2.trait_names())
-    # Make sure the 2 objects don't differ by more than Traits cache attributes
+    # Make sure the 2 objects don't differ by more than the Traits cache
+    # attributes
     for trait_name in obj1_traits ^ obj2_traits:
         if not trait_name.startswith(TRAITS_PROPERTY_CACHE_PREFIX) and \
                         trait_name not in trait_names_to_ignore:
@@ -88,6 +96,10 @@ def is_has_traits_almost_equal(obj1, obj2, attr_name="", eps=1e-9, ignore=(),
             trait_path = attr_name + "." + trait
         else:
             trait_path = trait
+
+        if debug:
+            print(f"Comparing objects' {trait_path} attribute.")
+
         if isinstance(val1, HasTraits):
             equal, msg = is_has_traits_almost_equal(val1, val2, trait_path,
                                                     eps=eps, ignore=ignore)
@@ -121,6 +133,9 @@ def is_val_almost_equal(val1, val2, attr_name="", check_dtype=False, eps=1e-9,
         List of attribute names to skip from comparisons of objects. These are
         passed recursively to elements of the values being compared and their
         children.
+
+    check_dtype : bool
+        Whether to check the dtypes if the values are numpy arrays.
     """
     if attr_name is None:
         if hasattr(val1, "name"):
