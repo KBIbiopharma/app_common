@@ -36,14 +36,6 @@ to run tests in that environment.  You can remove the environment with::
 
     python etstool.py cleanup --runtime=... --toolkit=...
 
-If you make changes you will either need to remove and re-install the
-environment or manually update the environment using ``edm``, as
-the install performs a ``python setup.py install`` rather than a ``develop``,
-so changes in your code will not be automatically mirrored in the test
-environment.  You can update with a command like::
-
-    edm run --environment ... -- python setup.py install
-
 You can run all three tasks at once with::
 
     python etstool.py test_clean --runtime=... --toolkit=...
