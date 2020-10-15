@@ -90,7 +90,7 @@ import click
 PKG_NAME = "app_common"
 
 supported_combinations = {
-    '3.6': {'pyside2', 'pyqt5', "wx"},
+    '3.6': {'pyqt5'},
 }
 
 # Default Python version to use in the commands below if none is specified.
@@ -123,7 +123,8 @@ extra_dependencies = {
     # XXX once pyside2 is available in EDM, we will want it here
     'pyside2': set(),
     'pyqt5': {'pyqt5'},
-    'wx': {"wx"},
+    # XXX once wx is available in EDM, we will want it here
+    'wx': set(),
 }
 
 runtime_dependencies = {}
@@ -136,6 +137,7 @@ doc_dependencies = {
 environment_vars = {
     'pyside2': {'ETS_TOOLKIT': 'qt4', 'QT_API': 'pyside2'},
     'pyqt5': {"ETS_TOOLKIT": "qt4", "QT_API": "pyqt5"},
+    'wx': {"ETS_TOOLKIT": "wx"},
 }
 
 
@@ -178,10 +180,18 @@ def install(runtime, toolkit, environment, edm_dir, editable):
 
     # pip install pyqt5 and pyside2, because we don't have them in EDM yet
     if toolkit == 'pyside2':
+        # Remove the default toolkit from dependency
+        commands.append(
+            "{edm_dir}edm remove -y -e {environment} pyqt5"
+        )
         commands.append(
             "{edm_dir}edm run -e {environment} -- pip install pyside2==5.11"
         )
     elif toolkit == 'wx':
+        commands.append(
+            "{edm_dir}edm remove -y -e {environment} pyqt5 qt"
+        )
+
         if sys.platform != 'linux':
             commands.append(
                 "{edm_dir}edm run -e {environment} -- pip install wxPython"
