@@ -19,7 +19,7 @@ def assert_has_traits_almost_equal(obj1, obj2, **kwargs):
         Additional keyword arguments passed to `is_has_traits_almost_equal`.
     """
     is_equal, msg = is_has_traits_almost_equal(obj1, obj2, **kwargs)
-    error_msg = "HasTraits objects are not almost equal: {}".format(msg)
+    error_msg = f"HasTraits objects are not almost equal: {msg}"
     assert_true(is_equal, error_msg)
 
 
@@ -36,7 +36,7 @@ def assert_has_traits_not_almost_equal(obj1, obj2, **kwargs):
 
     """
     is_equal, msg = is_has_traits_almost_equal(obj1, obj2, **kwargs)
-    error_msg = "HasTraits objects are not almost equal: {}".format(msg)
+    error_msg = f"HasTraits objects are unexpectedly almost equal: {msg}"
     assert_false(is_equal, error_msg)
 
 
@@ -54,7 +54,7 @@ def assert_values_almost_equal(val1, val2, **kwargs):
         Additional keyword arguments passed to `is_val_almost_equal`.
     """
     is_equal, msg = is_val_almost_equal(val1, val2, **kwargs)
-    assert_true(is_equal, "Values are not almost equal: {}".format(msg))
+    assert_true(is_equal, f"Values are not almost equal: {msg}")
 
 
 def assert_values_not_almost_equal(val1, val2, **kwargs):
@@ -71,4 +71,4 @@ def assert_values_not_almost_equal(val1, val2, **kwargs):
         Additional keyword arguments passed to `is_val_almost_equal`.
     """
     is_equal, msg = is_val_almost_equal(val1, val2, **kwargs)
-    assert_false(is_equal, "Values are not almost equal: {}".format(msg))
+    assert_false(is_equal, f"Values are unexpectedly almost equal: {msg}")
