@@ -52,8 +52,8 @@ def is_has_traits_almost_equal(obj1, obj2, attr_name="", eps=1e-9, ignore=(),
         Whether to check the dtypes of the numpy array attributes.
 
     debug : bool
-        Whether to print attribute paths during usage. Useful if the function
-        raises an exception, to track what attribute led to that exception.
+        Whether to print attribute paths during usage. Useful to watch the
+        execution of the comparison, for debugging or timing purposes.
     """
     if not isinstance(obj1, HasTraits):
         msg = "First arg ({}) not a HasTraits class: {}"
@@ -102,12 +102,14 @@ def is_has_traits_almost_equal(obj1, obj2, attr_name="", eps=1e-9, ignore=(),
             print(f"Comparing objects' {trait_path} attribute.")
 
         if isinstance(val1, HasTraits):
-            equal, msg = is_has_traits_almost_equal(val1, val2, trait_path,
-                                                    eps=eps, ignore=ignore)
+            equal, msg = is_has_traits_almost_equal(
+                val1, val2, trait_path, eps=eps, ignore=ignore, debug=debug
+            )
         else:
-            equal, msg = is_val_almost_equal(val1, val2, trait_path, eps=eps,
-                                             check_dtype=check_dtype,
-                                             ignore=ignore)
+            equal, msg = is_val_almost_equal(
+                val1, val2, trait_path, eps=eps, check_dtype=check_dtype,
+                ignore=ignore, debug=debug
+            )
         if not equal:
             return False, msg
 
@@ -115,7 +117,7 @@ def is_has_traits_almost_equal(obj1, obj2, attr_name="", eps=1e-9, ignore=(),
 
 
 def is_val_almost_equal(val1, val2, attr_name="", check_dtype=False, eps=1e-9,
-                        ignore=()):
+                        ignore=(), debug=False):
     """ Test if 2 values are almost equal up to a certain precision.
 
     Parameters
@@ -137,6 +139,10 @@ def is_val_almost_equal(val1, val2, attr_name="", check_dtype=False, eps=1e-9,
 
     check_dtype : bool
         Whether to check the dtypes if the values are numpy arrays.
+
+    debug : bool
+        Whether to print attribute paths during usage. Useful to watch the
+        execution of the comparison, for debugging or timing purposes.
     """
     if attr_name is None:
         if hasattr(val1, "name"):
@@ -200,7 +206,8 @@ def is_val_almost_equal(val1, val2, attr_name="", check_dtype=False, eps=1e-9,
             subattr_name = "{}[{}]".format(attr_name, i)
             if isinstance(el1, HasTraits):
                 equal, msg = is_has_traits_almost_equal(
-                    el1, el2, attr_name=subattr_name, eps=eps, ignore=ignore
+                    el1, el2, attr_name=subattr_name, eps=eps, ignore=ignore,
+                    debug=debug
                 )
                 if not equal:
                     return False, msg
@@ -219,7 +226,8 @@ def is_val_almost_equal(val1, val2, attr_name="", check_dtype=False, eps=1e-9,
             val = "{}[{}]".format(attr_name, key)
             if isinstance(el1, HasTraits):
                 equal, msg = is_has_traits_almost_equal(
-                    el1, el2, attr_name=val, eps=eps, ignore=ignore
+                    el1, el2, attr_name=val, eps=eps, ignore=ignore,
+                    debug=debug
                 )
                 if not equal:
                     return False, msg
