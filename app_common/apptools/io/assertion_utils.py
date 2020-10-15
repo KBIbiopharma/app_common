@@ -15,7 +15,7 @@ from app_common.apptools.io.deserializer import deserialize
 
 
 def assert_roundtrip_identical(obj, serial_func=None, deserial_func=None,
-                               ignore=(), eps=1e-9):
+                               **kwargs):
     """ Serialize and deserialize an object and assert that the resulting
     object is identical to the input object.
 
@@ -31,12 +31,8 @@ def assert_roundtrip_identical(obj, serial_func=None, deserial_func=None,
         Function to deserialize data into an object. Should return a collection
         where the deserialized object is the first element.
 
-    ignore : collection
-        List of attribute names to ignore when checking that the roundtrip gave
-        an identical object.
-
-    eps : float
-        Precision beyond which floating point values are considered different.
+    kwargs : dict
+        Additional keyword arguments passed to `is_has_traits_almost_equal`.
 
     Returns
     -------
@@ -57,14 +53,14 @@ def assert_roundtrip_identical(obj, serial_func=None, deserial_func=None,
                                    array_collection=array_collection)[0]
 
     if isinstance(obj, HasTraits):
-        assert_has_traits_almost_equal(obj, new_object, ignore=ignore, eps=eps)
+        assert_has_traits_almost_equal(obj, new_object, **kwargs)
     else:
-        assert_values_almost_equal(obj, new_object, ignore=ignore, eps=eps)
+        assert_values_almost_equal(obj, new_object, **kwargs)
     return new_object
 
 
 def assert_file_roundtrip_identical(obj, save_func=None, load_func=None,
-                                    ignore=(), eps=1e-9, target_dir=None):
+                                    target_dir=None, **kwargs):
     """ Serialize and deserialize an object and assert that the resulting
     object is identical to the input object.
 
@@ -78,12 +74,8 @@ def assert_file_roundtrip_identical(obj, save_func=None, load_func=None,
         Function to load the object from file. It should return a collection
         where the deserialized object is the first element.
 
-    ignore : collection
-        List of attribute names to ignore when checking that the roundtrip gave
-        an identical object.
-
-    eps : float
-        Precision beyond which floating point values are considered different.
+    kwargs : dict
+        Additional keyword arguments passed to `is_has_traits_almost_equal`.
 
     Returns
     -------
@@ -105,7 +97,6 @@ def assert_file_roundtrip_identical(obj, save_func=None, load_func=None,
             new_object = load_func(fname)[0]
 
         if isinstance(obj, HasTraits):
-            assert_has_traits_almost_equal(obj, new_object, ignore=ignore,
-                                           eps=eps)
+            assert_has_traits_almost_equal(obj, new_object, **kwargs)
         else:
-            assert_values_almost_equal(obj, new_object, ignore=ignore, eps=eps)
+            assert_values_almost_equal(obj, new_object, **kwargs)
