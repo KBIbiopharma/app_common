@@ -5,6 +5,7 @@ from scimath.units.api import UnitArray, UnitScalar
 from app_common.scimath.assertion_utils import assert_unit_array_almost_equal,\
     assert_unit_scalar_almost_equal
 
+
 def assert_frame_not_equal(*args, **kwargs):
     """ Not implemented in pandas."""
     try:
