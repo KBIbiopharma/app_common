@@ -3,6 +3,7 @@
 | Linux, OSX  | [![Build Status](https://travis-ci.org/KBIbiopharma/app_common.svg?branch=master)](https://travis-ci.org/KBIbiopharma/app_common) |
 | ----------- | ----------- |
 | Win         | [![Build status](https://ci.appveyor.com/api/projects/status/7fficyruc7myu0mp/branch/master?svg=true)](https://ci.appveyor.com/project/jonathanrocher/app-common/branch/master)       |
+| Coverage    | [![Coverage](https://codecov.io/github/KBIbiopharma/app_common/coverage.svg?branch=master)](https://codecov.io/gh/KBIbiopharma/app_common)
 
 
 ## Description
