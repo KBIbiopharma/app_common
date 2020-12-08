@@ -56,9 +56,8 @@ def save_plot_to_file(plot, filepath=None, width=800, height=600, bgcolor=None,
         elif file_format in ["jpeg", "jpg"]:
             filepath = to_jpg_file_requester()
         else:
-            msg = "Format {} not supported: {} so no file path can be " \
-                  "requested. Please report this issue and provide the " \
-                  "filepath explicitely.".format(file_format)
+            msg = f"Format {file_format} not supported. Please report this " \
+                  f"issue and provide the filepath explicitly instead."
             logger.exception(msg)
             raise ValueError(msg)
 
