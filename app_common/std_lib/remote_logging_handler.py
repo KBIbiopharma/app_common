@@ -1,4 +1,4 @@
-from logging import getLogger, Handler
+from logging import Handler
 from datetime import datetime
 import requests
 from uuid import uuid4
