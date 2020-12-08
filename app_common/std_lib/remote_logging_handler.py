@@ -1,4 +1,4 @@
-from logging import Handler
+from logging import getLogger, Handler
 from datetime import datetime
 import requests
 from uuid import uuid4
@@ -64,5 +64,9 @@ class RequestsHTTPHandler(Handler):
         return str(data).replace("'", '"')
 
     def clean_msg(self, msg):
-        """ Clean logging message to make it HTTP compatible. """
+        """ Clean logging message to make it HTTP compatible.
+        """
+        if isinstance(msg, Exception):
+            msg = f"{msg.__class__.__name__}({str(msg)})"
+
         return msg.replace("'", " ")
