@@ -159,14 +159,20 @@ class Serializer(HasStrictTraits):
         return serializer
 
 
-class DataElement_Serializer(Serializer):
+class SimpleObj_Serializer(Serializer):
+    """ Base Serializer for keyword arg only constructors, such as most
+    HasTraits classes.
+    """
     def get_serial_data(self, obj):
-        # Skip data part: almost every HasTraits class gets created without
-        # positional args
         serial_data = self.get_serial_data_base(obj)
         serial_data.update(self.get_instance_data(obj))
         return serial_data
 
+
+class DataElement_Serializer(SimpleObj_Serializer):
+    """ Base Serializer for keyword arg only constructors, such as most
+        HasTraits classes.
+    """
     def attr_names_to_serialize(self, obj):
         return ['name', 'uuid', 'editable']
 

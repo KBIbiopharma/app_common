@@ -214,7 +214,7 @@ class deSerializer(HasStrictTraits):
         return instance
 
 
-class dataElementDeSerializer(deSerializer):
+class simpleObjDeSerializer(deSerializer):
 
     klass = Type
 
@@ -222,6 +222,8 @@ class dataElementDeSerializer(deSerializer):
         instance = self.klass(**constructor_data['kwargs'])
         return instance
 
+
+class dataElementDeSerializer(simpleObjDeSerializer):
     def _klass_default(self):
         from app_common.model_tools.data_element import DataElement
         return DataElement
