@@ -7,7 +7,7 @@ DEFAULT_MAX_ELEMENT_TO_FILTER = 500
 
 
 class DataFilter(DataElement):
-    """ Description of a way to filter, randomize, truncate, sort, groupby a DF
+    """ Description of how to filter, randomize, truncate, sort, groupby a DF.
 
     Note that not all these operations are commutative, so they should be
     applied in the order specified by _operation_order.
