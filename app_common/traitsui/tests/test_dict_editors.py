@@ -78,7 +78,7 @@ class TestDictValueEditor(TestCase):
 
     def test_value_to_trait_func(self):
         def value_to_trait(value):
-            return Range(low=0, high=1, value=value)
+            return Range(low=0, high=10, value=value)
 
         editor = DictValueEditor(target_dict={"a": 1, "b": 2},
                                  value_to_trait=value_to_trait)
