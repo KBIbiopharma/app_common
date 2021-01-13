@@ -1,5 +1,4 @@
-
-from traits.api import Bool, Int, List, Str
+from traits.api import Bool, Enum, Int, List, Str
 
 from app_common.model_tools.data_element import DataElement
 
@@ -21,8 +20,11 @@ class DataFilter(DataElement):
     #: Max num. of elements to filter. Set to 0 to show all.
     max_num_elems = Int(DEFAULT_MAX_ELEMENT_TO_FILTER)
 
+    #: List of possible values for the `sort_by` variable
+    sort_by_values = List
+
     #: Column to sort the DF on
-    sort_by = Str
+    sort_by = Enum(values="sort_by_values")
 
     #: Whether to sort following ascending order (True) or descending (False)
     sort_ascending = Bool(False)
