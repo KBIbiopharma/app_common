@@ -36,7 +36,16 @@ class DictValueEditor(HasStrictTraits):
 
     show_title_in_view = Bool
 
-    def __init__(self, **traits):
+    def __init__(self, *args, **traits):
+        if args:
+            if len(args) != 1:
+                msg = "A DictValueEditor should be created with 1 " \
+                      "positional argument at the most, providing the " \
+                      "target_dict."
+                raise ValueError(msg)
+            else:
+                traits["target_dict"] = args[0]
+
         super(DictValueEditor, self).__init__(**traits)
         if not self.target_dict:
             msg = "A target dict to edit is needed to be able to edit it."
