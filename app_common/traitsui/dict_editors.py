@@ -94,7 +94,9 @@ class DictValueEditor(HasStrictTraits):
 if __name__ == "__main__":
     from traits.api import Range
 
-    value_to_trait = lambda value: Range(low=0, high=1, value=value)
+    def value_to_trait(value):
+        return Range(low=0, high=1, value=value)
+
     editor = DictValueEditor(target_dict={"a": 1, "b c": 0.5},
                              value_to_trait=value_to_trait,
                              title="Dict editor", show_title_in_view=True)

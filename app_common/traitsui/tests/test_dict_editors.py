@@ -77,7 +77,9 @@ class TestDictValueEditor(TestCase):
         self.assertEqual(editor.target_dict["b*c"], 3)
 
     def test_value_to_trait_func(self):
-        value_to_trait = lambda value: Range(low=0, high=10, value=value)
+        def value_to_trait(value):
+            return Range(low=0, high=1, value=value)
+
         editor = DictValueEditor(target_dict={"a": 1, "b": 2},
                                  value_to_trait=value_to_trait)
         self.assertIn("a", editor.traits())
