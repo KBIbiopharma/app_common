@@ -23,7 +23,7 @@ class TestDictValueEditor(TestCase):
 
     def test_bring_up_ui_custom_item_attr(self):
         def item_kwargs_generator(key):
-            return {"label": key, "readonly": True}
+            return {"label": key, "style": "readonly"}
 
         editor = DictValueEditor(target_dict={"a": 1, "b": 2},
                                  item_kwargs=item_kwargs_generator)
