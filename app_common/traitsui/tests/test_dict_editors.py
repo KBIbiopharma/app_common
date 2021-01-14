@@ -18,7 +18,16 @@ class TestDictValueEditor(TestCase):
         self.assertIn("a", editor.traits())
 
     def test_bring_up_ui(self):
-        assert_obj_gui_works(DictValueEditor(target_dict={"a": 1, "b": 2}))
+        editor = DictValueEditor(target_dict={"a": 1, "b": 2})
+        assert_obj_gui_works(editor)
+
+    def test_bring_up_ui_custom_item_attr(self):
+        def item_kwargs_generator(key):
+            return {"label": key, "readonly": True}
+
+        editor = DictValueEditor(target_dict={"a": 1, "b": 2},
+                                 item_kwargs=item_kwargs_generator)
+        assert_obj_gui_works(editor)
 
     def test_change_trait_changes_float_dict(self):
         editor = DictValueEditor(target_dict={"a": 1.1, "b": 2.2})
