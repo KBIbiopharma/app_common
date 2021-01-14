@@ -18,22 +18,31 @@ class DictValueEditor(HasStrictTraits):
     returning Item attributes such as `label`, `readonly`, `editor`, ... By
     default, only the label is set to the dictionary key.
     """
+    #: Dictionary that will be edited
     target_dict = Dict
 
+    #: Dict mapping the trait name to the original key
     _trait_map = Dict
 
+    #: Dict mapping the original key to the created trait name
     _key_map = Dict
 
-    view_klass = Callable
+    #: View class
+    view_klass = Callable(View)
 
-    key_to_trait = Callable
+    #: Function to sanitize the keys to define a trait
+    key_to_trait = Callable(sanitize_string)
 
+    #: Function to convert a value to a (typed) trait
     value_to_trait = Callable(Float)
 
+    #: Function to set Item attributes for a given key
     item_kwargs = Callable(lambda key: {"label": key})
 
+    #: Title of the created window (and potentially displayed )
     title = Str
 
+    #: Whether to display the title inside the UI panel
     show_title_in_view = Bool
 
     def __init__(self, *args, **traits):
@@ -83,12 +92,6 @@ class DictValueEditor(HasStrictTraits):
         trait_changes = {self._key_map[key]: value
                          for key, value in kwargs.items()}
         self.trait_set(**trait_changes)
-
-    def _key_to_trait_default(self):
-        return sanitize_string
-
-    def _view_klass_default(self):
-        return View
 
 
 if __name__ == "__main__":
