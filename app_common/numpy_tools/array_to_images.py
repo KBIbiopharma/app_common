@@ -21,27 +21,31 @@ def write_array_to_image(img_array, filepath, writer_func=None, **kwargs):
 
     filepath : str
         File path to save to. Format is controlled by extension of the file
-        path. Supported file formats include PNG, JPEG, HDF5.
+        path. Supported file formats include PNG, JPEG, HDF5. If no extension
+        is found, a jpeg extension is added to the filepath returned.
 
     writer_func : callable
-        Special writer to use. Must return True on success.
+        Special writer to use. Must return the filepath written to on success.
 
     kwargs : dict
         Keyword arguments for the writer function.
+
+    Returns
+    -------
+    str
+        Path to the file written to. It's the filepath provided as input,
+        optionally with a jpeg extension if no file extension was provided.
     """
+    ext = splitext(filepath)[1].lower()
+    if not ext:
+        ext = ".jpeg"
+        filepath += ext
+
     if writer_func is None:
-        ext = splitext(filepath)[1].lower()
-        writers = {".png": write_array_to_image_file,
-                   ".jpeg": write_array_to_image_file,
-                   ".jpg": write_array_to_image_file,
-                   ".hdf5": write_array_to_h5_file,
-                   ".h5": write_array_to_h5_file}
-        writer_func = writers[ext]
+        writer_func = WRITERS[ext]
 
     result = writer_func(img_array, filepath, **kwargs)
-
-    if result:
-        logger.debug("Array written to {}".format(filepath))
+    return result
 
 
 def write_array_to_image_file(img_array, filepath, mode=None):
@@ -61,12 +65,17 @@ def write_array_to_image_file(img_array, filepath, mode=None):
         arrays). Requesting it as an argument to avoid an if statement for
         situation where MANY files must be created from arrays with the same
         dtype.
+
+    Returns
+    -------
+    str
+        Path to the file written to.
     """
     # Create a PIL image and then save:
     img = toimage(img_array, low=min(img_array), high=max(img_array),
                   mode=mode)
     img.save(filepath)
-    return True
+    return filepath
 
 
 def write_array_to_h5_file(img_array, filepath, node, node_shape=None,
@@ -81,6 +90,11 @@ def write_array_to_h5_file(img_array, filepath, node, node_shape=None,
     filepath : str
         Path to the image file to create.
 
+    Returns
+    -------
+    str
+        Path to the file written to.
+
     FIXME: add tests and support for compression.
     """
     from h5py import File
@@ -92,7 +106,7 @@ def write_array_to_h5_file(img_array, filepath, node, node_shape=None,
             dset = h5file.get(node)
 
         dset[slice_start:slice_end] = img_array
-    return True
+    return filepath
 
 
 # -----------------------------------------------------------------------------
@@ -283,3 +297,10 @@ def toimage(arr, high=255, low=0, cmin=None, cmax=None, pal=None,
     # Here we know data and mode is correct
     image = Image.frombytes(mode, shape, strdata)
     return image
+
+
+WRITERS = {".png": write_array_to_image_file,
+          ".jpeg": write_array_to_image_file,
+          ".jpg": write_array_to_image_file,
+          ".hdf5": write_array_to_h5_file,
+          ".h5": write_array_to_h5_file}
