@@ -27,7 +27,7 @@ def initialize_logging(include_console=True, logging_level=WARNING,
     logging_level : str or int, optional
         Level of sensitivity of the **console handler**. Valid values are
         'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL' or an integer value.
-        Ignored if include_console is set to `True`.
+        Ignored if `include_console` is set to `True`.
 
     log_file : str or None, optional
         The name of the log file. If this is None, the name will be set from
