@@ -101,6 +101,8 @@ def unitarray_to_unitted_list(uarr):
 def has_volume_units(units):
     if isinstance(units, (UnitScalar, UnitArray)):
         units = units.units
+    elif isinstance(units, string_types):
+        units = parse_unit(units)
 
     return units.derivation == (3, 0, 0, 0, 0, 0, 0)
 
@@ -108,6 +110,8 @@ def has_volume_units(units):
 def has_mass_units(units):
     if isinstance(units, (UnitScalar, UnitArray)):
         units = units.units
+    elif isinstance(units, string_types):
+        units = parse_unit(units)
 
     return units.derivation == (0, 1, 0, 0, 0, 0, 0)
 
