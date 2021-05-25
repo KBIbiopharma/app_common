@@ -14,16 +14,20 @@ from app_common.std_lib.remote_logging_handler import RequestsHTTPHandler
 ACTION_LEVEL = 25
 
 
-def initialize_logging(logging_level=WARNING, log_file=None, log_dir=".",
-                       prefix=None, include_console=True, dt_fmt="",
+def initialize_logging(include_console=True, logging_level=WARNING,
+                       log_file=None, log_dir=".", prefix=None, dt_fmt="",
                        include_http=False, http_logger_kw=None):
     """ Set up logging with a console handler and optionally a file handler.
 
     Parameters
     ----------
+    include_console : bool
+        Whether to include a console logging handler.
+
     logging_level : str or int, optional
         Level of sensitivity of the **console handler**. Valid values are
-        'NOTSET', 'DEBUG', 'WARNING', 'ERROR', 'CRITICAL' or an integer value.
+        'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL' or an integer value.
+        Ignored if `include_console` is set to `True`.
 
     log_file : str or None, optional
         The name of the log file. If this is None, the name will be set from
@@ -36,9 +40,6 @@ def initialize_logging(logging_level=WARNING, log_file=None, log_dir=".",
 
     prefix : None or str, optional
         Prefix for the log file name. Ignored if log_file is provided.
-
-    include_console : bool
-        Whether to include a console logging handler.
 
     include_http : bool
         Whether to include an HTTP logging handler.
