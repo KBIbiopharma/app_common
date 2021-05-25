@@ -99,6 +99,8 @@ def unitarray_to_unitted_list(uarr):
 
 
 def has_volume_units(units):
+    """ Retuns whether a unit, a unit label, or a unitted quantity is a volume.
+    """
     if isinstance(units, (UnitScalar, UnitArray)):
         units = units.units
     elif isinstance(units, string_types):
@@ -108,6 +110,8 @@ def has_volume_units(units):
 
 
 def has_mass_units(units):
+    """ Retuns whether a unit, a unit label, or a unitted quantity is a mass.
+    """
     if isinstance(units, (UnitScalar, UnitArray)):
         units = units.units
     elif isinstance(units, string_types):
