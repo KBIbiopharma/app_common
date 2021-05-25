@@ -134,6 +134,9 @@ class TestUnitHasMassUnits(TestCase):
         val1 = UnitScalar(1., units="kg")
         self.assertTrue(has_mass_units(val1.units))
 
+    def test_mass_as_string(self):
+        self.assertTrue(has_mass_units("g"))
+
     def test_not_mass(self):
         val1 = UnitScalar(1., units="meter")
         self.assertFalse(has_mass_units(val1.units))
@@ -155,6 +158,9 @@ class TestUnitHasVolumeUnits(TestCase):
 
         val1 = UnitScalar(1., units="m**3")
         self.assertTrue(has_volume_units(val1.units))
+
+    def test_mass_as_string(self):
+        self.assertTrue(has_volume_units("m**3"))
 
     def test_not_volume(self):
         val1 = UnitScalar(1., units="meter")
