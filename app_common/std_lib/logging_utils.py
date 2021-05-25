@@ -23,7 +23,7 @@ def initialize_logging(logging_level=WARNING, log_file=None, log_dir=".",
     ----------
     logging_level : str or int, optional
         Level of sensitivity of the **console handler**. Valid values are
-        'NOTSET', 'DEBUG', 'WARNING', 'ERROR', 'CRITICAL' or an integer value.
+        'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL' or an integer value.
 
     log_file : str or None, optional
         The name of the log file. If this is None, the name will be set from
