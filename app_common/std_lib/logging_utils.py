@@ -134,7 +134,7 @@ def http_logging_handler(url="", logging_level=WARNING,
 
     try:
         logger = getLogger(__name__)
-        logger.log(logging_level+10, "Testing new remote handler...")
+        logger.log(logging_level + 10, "Testing new remote handler...")
     except Exception as e:
         root_logger.handlers.remove(http_handler)
         msg = f"Failed to issue a log call, probably because of the remote " \
