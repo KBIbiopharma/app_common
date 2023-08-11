@@ -1,0 +1,5 @@
+store_url: https://packages.enthought.com
+repositories:
+  - enthought/commercial
+  - enthought/free
+  - enthought/lgpl
