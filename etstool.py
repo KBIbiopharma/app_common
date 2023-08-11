@@ -40,32 +40,7 @@ You can run all three tasks at once with::
 
     python etstool.py test_clean --runtime=... --toolkit=...
 
-which will create, install, run tests, and then clean-up the environment.  And
-you can run tests in all supported runtimes and toolkits (with cleanup)
-using::
-
-    python etstool.py test_all
-
-Currently supported runtime values are ``3.5`` and ``3.6``, and currently
-supported toolkits are ``null``, ``pyqt``, ``pyqt5``, ``pyside`` and ``wx``.
-Not all combinations of toolkits and runtimes will work, but the tasks will
-fail with a clear error if that is the case.
-
-Tests can still be run via the usual means in other environments if that suits
-a developer's purpose.
-
-Changing This File
-------------------
-
-To change the packages installed during a test run, change the dependencies
-variable below.  To install a package from github, or one which is not yet
-available via EDM, add it to the `ci-src-requirements.txt` file (these will be
-installed by `pip`).
-
-Other changes to commands should be a straightforward change to the listed
-commands for each task. See the EDM documentation for more information about
-how to run commands within an EDM enviornment.
-
+which will create, install, run tests, and then clean-up the environment.
 """
 
 import glob
@@ -113,12 +88,8 @@ test_dependencies = set()
 
 # Additional toolkit-dependent dependencies
 extra_dependencies = {
-    # XXX once pyside2 is available in EDM, we will want it here
-    'pyside2': set(),
     'pyqt5': {'pyqt5'},
     'pyside6': {"pyside6"},
-    # XXX once wx is available in EDM, we will want it here
-    'wx': set(),
 }
 
 runtime_dependencies = {}
@@ -129,10 +100,8 @@ doc_dependencies = {
 }
 
 environment_vars = {
-    'pyside2': {'ETS_TOOLKIT': 'qt4', 'QT_API': 'pyside2'},
     'pyqt5': {"ETS_TOOLKIT": "qt4", "QT_API": "pyqt5"},
     "pyside6": {'ETS_TOOLKIT': 'qt', 'QT_API': 'pyside6'},
-    'wx': {"ETS_TOOLKIT": "wx"},
 }
 
 
