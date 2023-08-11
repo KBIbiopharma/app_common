@@ -40,32 +40,7 @@ You can run all three tasks at once with::
 
     python etstool.py test_clean --runtime=... --toolkit=...
 
-which will create, install, run tests, and then clean-up the environment.  And
-you can run tests in all supported runtimes and toolkits (with cleanup)
-using::
-
-    python etstool.py test_all
-
-Currently supported runtime values are ``3.5`` and ``3.6``, and currently
-supported toolkits are ``null``, ``pyqt``, ``pyqt5``, ``pyside`` and ``wx``.
-Not all combinations of toolkits and runtimes will work, but the tasks will
-fail with a clear error if that is the case.
-
-Tests can still be run via the usual means in other environments if that suits
-a developer's purpose.
-
-Changing This File
-------------------
-
-To change the packages installed during a test run, change the dependencies
-variable below.  To install a package from github, or one which is not yet
-available via EDM, add it to the `ci-src-requirements.txt` file (these will be
-installed by `pip`).
-
-Other changes to commands should be a straightforward change to the listed
-commands for each task. See the EDM documentation for more information about
-how to run commands within an EDM enviornment.
-
+which will create, install, run tests, and then clean-up the environment.
 """
 
 import glob
@@ -83,13 +58,14 @@ PKG_NAME = "app_common"
 
 supported_combinations = {
     '3.6': {'pyqt5'},
+    '3.8': {'pyside6'},
 }
 
 # Default Python version to use in the commands below if none is specified.
-DEFAULT_RUNTIME = '3.6'
+DEFAULT_RUNTIME = '3.8'
 
 # Default toolkit to use if none specified.
-DEFAULT_TOOLKIT = 'pyqt5'
+DEFAULT_TOOLKIT = 'pyside6'
 
 DEPENDENCIES = "ci/requirements.json"
 DEV_DEPENDENCIES = "ci/dev_requirements.json"
@@ -112,11 +88,8 @@ test_dependencies = set()
 
 # Additional toolkit-dependent dependencies
 extra_dependencies = {
-    # XXX once pyside2 is available in EDM, we will want it here
-    'pyside2': set(),
     'pyqt5': {'pyqt5'},
-    # XXX once wx is available in EDM, we will want it here
-    'wx': set(),
+    'pyside6': {"pyside6"},
 }
 
 runtime_dependencies = {}
@@ -127,9 +100,8 @@ doc_dependencies = {
 }
 
 environment_vars = {
-    'pyside2': {'ETS_TOOLKIT': 'qt4', 'QT_API': 'pyside2'},
     'pyqt5': {"ETS_TOOLKIT": "qt4", "QT_API": "pyqt5"},
-    'wx': {"ETS_TOOLKIT": "wx"},
+    "pyside6": {'ETS_TOOLKIT': 'qt', 'QT_API': 'pyside6'},
 }
 
 
@@ -165,34 +137,10 @@ def install(runtime, toolkit, environment, edm_dir, editable):
     commands = [
         "{edm_dir}edm environments create {environment} --force "
         "--version={runtime}",
-        "{edm_dir}edm install -y -e {environment} " + packages,
+        "{edm_dir}edm -c edm.yaml install -y -e {environment} " + packages,
         "{edm_dir}edm run -e {environment} -- python setup.py clean --all",
         "{edm_dir}edm run -e {environment} -- pip install -e .",
     ]
-
-    # pip install pyqt5 and pyside2, because we don't have them in EDM yet
-    if toolkit == 'pyside2':
-        # Remove the default toolkit from dependency
-        commands.append(
-            "{edm_dir}edm remove -y -e {environment} pyqt5"
-        )
-        commands.append(
-            "{edm_dir}edm run -e {environment} -- pip install pyside2==5.11"
-        )
-    elif toolkit == 'wx':
-        commands.append(
-            "{edm_dir}edm remove -y -e {environment} pyqt5 qt"
-        )
-
-        if sys.platform != 'linux':
-            commands.append(
-                "{edm_dir}edm run -e {environment} -- pip install wxPython"
-            )
-        else:
-            # XXX this is mainly for TravisCI workers; need a generic solution
-            commands.append(
-                "{edm_dir}edm run -e {environment} -- pip install -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-14.04 wxPython"
-            )
 
     click.echo("Creating environment '{environment}'".format(**parameters))
     execute(commands, parameters)
