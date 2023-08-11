@@ -83,13 +83,14 @@ PKG_NAME = "app_common"
 
 supported_combinations = {
     '3.6': {'pyqt5'},
+    '3.8': {'pyside6'},
 }
 
 # Default Python version to use in the commands below if none is specified.
-DEFAULT_RUNTIME = '3.6'
+DEFAULT_RUNTIME = '3.8'
 
 # Default toolkit to use if none specified.
-DEFAULT_TOOLKIT = 'pyqt5'
+DEFAULT_TOOLKIT = 'pyside6'
 
 DEPENDENCIES = "ci/requirements.json"
 DEV_DEPENDENCIES = "ci/dev_requirements.json"
@@ -115,6 +116,7 @@ extra_dependencies = {
     # XXX once pyside2 is available in EDM, we will want it here
     'pyside2': set(),
     'pyqt5': {'pyqt5'},
+    'pyside6': {"pyside6"},
     # XXX once wx is available in EDM, we will want it here
     'wx': set(),
 }
@@ -129,6 +131,7 @@ doc_dependencies = {
 environment_vars = {
     'pyside2': {'ETS_TOOLKIT': 'qt4', 'QT_API': 'pyside2'},
     'pyqt5': {"ETS_TOOLKIT": "qt4", "QT_API": "pyqt5"},
+    "pyside6": {'ETS_TOOLKIT': 'qt', 'QT_API': 'pyside6'},
     'wx': {"ETS_TOOLKIT": "wx"},
 }
 
