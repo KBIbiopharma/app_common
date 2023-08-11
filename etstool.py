@@ -142,30 +142,6 @@ def install(runtime, toolkit, environment, edm_dir, editable):
         "{edm_dir}edm run -e {environment} -- pip install -e .",
     ]
 
-    # pip install pyqt5 and pyside2, because we don't have them in EDM yet
-    if toolkit == 'pyside2':
-        # Remove the default toolkit from dependency
-        commands.append(
-            "{edm_dir}edm remove -y -e {environment} pyqt5"
-        )
-        commands.append(
-            "{edm_dir}edm run -e {environment} -- pip install pyside2==5.11"
-        )
-    elif toolkit == 'wx':
-        commands.append(
-            "{edm_dir}edm remove -y -e {environment} pyqt5 qt"
-        )
-
-        if sys.platform != 'linux':
-            commands.append(
-                "{edm_dir}edm run -e {environment} -- pip install wxPython"
-            )
-        else:
-            # XXX this is mainly for TravisCI workers; need a generic solution
-            commands.append(
-                "{edm_dir}edm run -e {environment} -- pip install -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-14.04 wxPython"
-            )
-
     click.echo("Creating environment '{environment}'".format(**parameters))
     execute(commands, parameters)
 
