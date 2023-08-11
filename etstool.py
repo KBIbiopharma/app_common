@@ -137,7 +137,7 @@ def install(runtime, toolkit, environment, edm_dir, editable):
     commands = [
         "{edm_dir}edm environments create {environment} --force "
         "--version={runtime}",
-        "{edm_dir}edm install -y -e {environment} -c edm.yaml " + packages,
+        "{edm_dir}edm -c edm.yaml install -y -e {environment} " + packages,
         "{edm_dir}edm run -e {environment} -- python setup.py clean --all",
         "{edm_dir}edm run -e {environment} -- pip install -e .",
     ]
