@@ -1,6 +1,6 @@
 [
 	"flake8",
-	"ipython4",
+	"ipython",
 	"nose",
 	"pip",
 	"setuptools"
