@@ -93,3 +93,5 @@ ENV/
 
 # PyCharm project files
 .idea
+
+ci/*.py
