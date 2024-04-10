@@ -172,6 +172,10 @@ request_csv_file = generate_file_requester("CSV", ".csv")
 
 request_excel_file = generate_file_requester("XLSX", ".xlsx")
 
+request_json_file = generate_file_requester("JSON", ".json")
+
+request_yaml_file = generate_file_requester("YAML", ".yaml")
+
 to_csv_file_requester = generate_file_requester("CSV", ".csv",
                                                 action="save as")
 
@@ -183,3 +187,9 @@ to_png_file_requester = generate_file_requester("PNG", ".png",
 
 to_jpg_file_requester = generate_file_requester("JPEG", ".jpg",
                                                 action="save as")
+
+to_json_file_requester = generate_file_requester("JSON", ".json",
+                                                 action="save as")
+
+to_yaml_file_requester = generate_file_requester("YAML", ".yaml",
+                                                 action="save as")
